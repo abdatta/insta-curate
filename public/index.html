@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaCurate</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="theme-color" content="#0095f6">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>InstaCurate</h1>
+      <div id="notifications-control">
+        <button id="enable-push" disabled>Enable Notifications</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="curated">Curated</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
+      </div>
+
+      <section id="curated-tab" class="tab-content active">
+        <div class="controls">
+            <button id="refresh-btn">Refresh</button>
+            <span id="last-run-status"></span>
+        </div>
+        <div id="curated-list">Loading...</div>
+      </section>
+
+      <section id="settings-tab" class="tab-content">
+        <div class="setting-group">
+            <h3>Run Control</h3>
+            <button id="run-now-btn">Run Curation Now</button>
+            <div id="run-msg"></div>
+        </div>
+
+        <div class="setting-group">
+            <h3>Schedule</h3>
+            <label>
+                <input type="checkbox" id="schedule-enabled"> Enable Schedule
+            </label>
+            <select id="schedule-interval">
+                <option value="2">Every 2 hours</option>
+                <option value="4">Every 4 hours</option>
+                <option value="6">Every 6 hours</option>
+                <option value="12">Every 12 hours</option>
+                <option value="24">Every 24 hours</option>
+            </select>
+        </div>
+
+        <div class="setting-group">
+            <h3>Profiles</h3>
+            <p>Enter Instagram handles (one per line):</p>
+            <textarea id="profiles-input" rows="10"></textarea>
+            <button id="save-profiles">Save Profiles</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
