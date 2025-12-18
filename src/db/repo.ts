@@ -101,6 +101,16 @@ export const savePosts = (posts: InputPost[]) => {
   const insert = db.prepare(`
     INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username)
     VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username)
+    ON CONFLICT(shortcode) DO UPDATE SET
+      run_id = excluded.run_id,
+      comment_count = excluded.comment_count,
+      like_count = excluded.like_count,
+      score = excluded.score,
+      is_curated = excluded.is_curated,
+      caption = excluded.caption,
+      accessibility_caption = excluded.accessibility_caption,
+      has_liked = excluded.has_liked,
+      username = excluded.username
   `);
   const insertMany = db.transaction((posts: InputPost[]) => {
     for (const post of posts) insert.run(post);

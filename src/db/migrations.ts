@@ -51,6 +51,7 @@ export function runMigrations() {
   
   db.exec(schema);
   
+  try { db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_posts_shortcode ON posts(shortcode)"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN media_type INTEGER DEFAULT 1"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN caption TEXT"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN accessibility_caption TEXT"); } catch (e) {}
