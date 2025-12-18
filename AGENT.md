@@ -16,13 +16,16 @@
 - **Scraper**: Functional. Uses **Network Interception** (Playwright `waitForResponse`) to capture `graphql/query` JSON responses.
     - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
 - **Curation**: Implemented. Score = `engagement * recency_decay`.
+- **Admin UI**:
+    - **Comment Flow**: Supports AI suggestion review, manual editing, and local persistence of `user_comment`.
+    - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
 - **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
 - **Notifications**: Web Push (VAPID) enabled.
-- **Frontend**: Vanilla JS PWA. Lists curated posts, allows manual triggering of runs.
+- **Frontend**: Vanilla JS PWA. Lists curated posts, allows manual triggering of runs, and supports comment approval workflow.
 
 **Known Issues**:
 - Instagram might prompt for login or challenge occasionally (handled via `auth.ts` manual login flow).
-- "Stuck" runs can block future executions (Automated fix: Server startup marks stuck runs as failed).
+- **Headless Mode**: Curation runs in `headless: true`. Manual login requires temporarily switching to `false` in `auth.ts` if needed, though current logic persists state well.
 
 ## 3. How to Run
 

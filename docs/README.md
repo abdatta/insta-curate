@@ -30,12 +30,12 @@
         - `settings`: Key-value store.
         - `profiles`: Target handles to scrape.
         - `runs`: Audit log of executions.
-        - `posts`: The curated content (normalized).
+        - `posts`: The curated content (normalized, includes `user_comment`).
         - `push_subscriptions`: VAPID endpoints for notifications.
 
 4.  **The Frontend (`public/`)**
     - **Tech**: Vanilla JS, CSS, HTML. Zero build step for frontend logic (TS for backend only).
-    - **Capabilities**: Installable PWA, Push Notifications, Offline-capable (via SW caching).
+    - **Capabilities**: Installable PWA, Push Notifications, **Comment Review Workflow**, **Historical Feed View**.
 
 ## Data Flow
 
@@ -44,3 +44,4 @@
 3.  **Process**: Filter posts by date -> Calculate Score -> Select top N posts per profile -> Select top M global posts.
 4.  **Store**: Save to `posts` table (UPSERT).
 5.  **Notify**: Send Web Push to all subscribed clients.
+6.  **Review**: User opens PWA -> Views "New" posts -> Selects/Edits AI suggestion -> Clicks "Post" (Saves locally).
