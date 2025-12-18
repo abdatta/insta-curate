@@ -119,8 +119,24 @@ function renderCurated(data) {
             <span class="post-handle">@${post.profile_handle}</span>
             <span class="post-meta">${new Date(post.posted_at).toLocaleString()}</span>
         </div>
+        
+        <div class="post-embed">
+            <iframe src="https://www.instagram.com/p/${post.shortcode}/embed" 
+                    frameborder="0" 
+                    scrolling="no" 
+                    allowtransparency="true"
+                    loading="lazy"></iframe>
+        </div>
+
+        <div class="post-caption">
+            ${post.caption ? post.caption.replace(/\n/g, '<br>') : '<i>No caption</i>'}
+        </div>
+
         <div class="post-stats">
-            Rank #${index + 1} | Score: ${post.score.toFixed(2)} | Comments: ${post.comment_count} | Likes: ${post.like_count || '?'}
+            <span>Rank #${index + 1}</span>
+            <span>Score: ${post.score.toFixed(2)}</span>
+            <span>Comments: ${post.comment_count}</span>
+            <span>Likes: ${post.like_count !== null ? post.like_count : '?'}</span>
         </div>
         <a href="${post.post_url}" target="_blank" class="post-link">Open in Instagram</a>
     </article>
