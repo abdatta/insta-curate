@@ -55,3 +55,4 @@ npm run build
 - **[Code Map](docs/CODEBASE_MAP.md)**: Where logic lives.
 - **[Glossary](docs/GLOSSARY.md)**: Key terms (`Run`, `Score`, etc.).
 - **[Decisions](docs/adr/)**: "Why did we do this?"
+- **[Best Practices](docs/BEST_PRACTICES.md)**: Coding standards and commit style.
