@@ -64,6 +64,10 @@ export const getLatestRun = (): Run | undefined => {
   return db.prepare('SELECT * FROM runs ORDER BY id DESC LIMIT 1').get() as Run | undefined;
 };
 
+export const getLatestSuccessfulRun = (): Run | undefined => {
+  return db.prepare("SELECT * FROM runs WHERE status = 'success' ORDER BY id DESC LIMIT 1").get() as Run | undefined;
+};
+
 export const failStuckRuns = () => {
     const runs = db.prepare("SELECT id FROM runs WHERE status = 'running'").all() as {id: number}[];
     if (runs.length > 0) {
@@ -95,12 +99,13 @@ export type InputPost = {
   accessibility_caption?: string | null;
   has_liked?: number;
   username?: string | null;
+  user_comment?: string | null;
 };
 
 export const savePosts = (posts: InputPost[]) => {
   const insert = db.prepare(`
-    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username)
-    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username)
+    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment)
+    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment)
     ON CONFLICT(shortcode) DO UPDATE SET
       run_id = excluded.run_id,
       comment_count = excluded.comment_count,
@@ -118,8 +123,22 @@ export const savePosts = (posts: InputPost[]) => {
   insertMany(posts);
 };
 
+export const updatePostComment = (shortcode: string, comment: string) => {
+    db.prepare('UPDATE posts SET user_comment = ? WHERE shortcode = ?').run(comment, shortcode);
+};
+
 export const getCuratedPosts = (runId: number) => {
   return db.prepare('SELECT * FROM posts WHERE run_id = ? AND is_curated = 1 ORDER BY score DESC').all(runId);
+};
+
+export const getAllCuratedPosts = () => {
+    return db.prepare(`
+        SELECT p.*, r.started_at as run_date, r.status as run_status 
+        FROM posts p 
+        JOIN runs r ON p.run_id = r.id 
+        WHERE p.is_curated = 1 
+        ORDER BY p.run_id DESC, p.score DESC
+    `).all();
 };
 
 // Subscriptions

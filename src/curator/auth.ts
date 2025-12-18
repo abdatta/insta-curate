@@ -9,7 +9,7 @@ export async function getContext(): Promise<{ context: BrowserContext; browser: 
   const hasStorage = fs.existsSync(STORAGE_STATE_PATH);
   
   // We use headless: true for curation, but false for login
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext(
     hasStorage ? { storageState: STORAGE_STATE_PATH, userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' } : { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
   );

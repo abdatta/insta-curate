@@ -98,7 +98,8 @@ export async function runCuration() {
       caption: p.caption,
       accessibility_caption: p.accessibilityCaption,
       has_liked: p.hasLiked ? 1 : 0,
-      username: p.username
+      username: p.username,
+      user_comment: null
     }));
     
     // Also save candidates that were not selected? Maybe just selected ones for now to keep DB small.

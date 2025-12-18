@@ -57,6 +57,7 @@ export function runMigrations() {
   try { db.exec("ALTER TABLE posts ADD COLUMN accessibility_caption TEXT"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN has_liked INTEGER DEFAULT 0"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN username TEXT"); } catch (e) {}
+  try { db.exec("ALTER TABLE posts ADD COLUMN user_comment TEXT"); } catch (e) {}
   
   console.log('Migrations run successfully');
 }

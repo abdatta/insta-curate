@@ -1,15 +1,17 @@
 import express from 'express';
-import path from 'path';
 import { 
   getCuratedPosts, 
+  getAllCuratedPosts,
   getLatestRun, 
+  getLatestSuccessfulRun,
   createRun, 
   completeRun,
   getSetting, 
   setSetting, 
   upsertProfiles, 
   getAllProfiles,
-  saveSubscription 
+  saveSubscription,
+  updatePostComment
 } from './db/repo';
 import { runCuration } from './curator/runCuration';
 import { getVapidPublicKey } from './push/vapid';
@@ -19,12 +21,29 @@ const router = express.Router();
 
 // GET /api/curated/latest
 router.get('/curated/latest', (req, res) => {
-  const run = getLatestRun();
-  if (!run) {
-    return res.json({ run: null, posts: [] });
-  }
-  const posts = getCuratedPosts(run.id);
-  res.json({ run, posts });
+  const lastRun = getLatestRun();
+  const successfulRun = getLatestSuccessfulRun();
+  
+  const posts = getAllCuratedPosts();
+  
+  res.json({ 
+      run: lastRun, 
+      latestSuccessfulRunId: successfulRun?.id,
+      posts 
+  });
+});
+
+// POST /api/posts/:shortcode/comment
+router.post('/posts/:shortcode/comment', (req, res) => {
+    const { shortcode } = req.params;
+    const { comment } = req.body;
+    
+    if (!comment || typeof comment !== 'string') {
+        return res.status(400).json({ error: 'Comment required' });
+    }
+    
+    updatePostComment(shortcode, comment);
+    res.json({ success: true, shortcode });
 });
 
 // POST /api/admin/run
