@@ -1,5 +1,9 @@
+```
 # Instagram Curator (insta-curate)
 
+> **For AI Agents:** Please refer to [AGENT.md](./AGENT.md) for context, rules, and navigation.
+
+## Overview
 A minimal Node.js + TypeScript PWA that curates Instagram posts from your feed based on engagement rules.
 
 ## Features

@@ -1,0 +1,57 @@
+# AI Agent Entry Point
+
+> **Read this first.** This file defines the context, goals, and rules for working on the `insta-act` repository.
+
+## 1. North Star & Constraints
+
+**Goal**: Build a personal, locally-hosted tool to curate high-quality Instagram posts from a specific list of profiles, filtering out noise so the user can see only the "best" content (high engagement/recency) without doom-scrolling.
+
+**Constraints & Non-Goals**:
+- **NOT a SaaS**: Use local storage (SQLite), local execution (Playwright on dev machine/server). No multi-tenancy.
+- **NOT an aggressive bot**: scraping is passive (reading timeline), low volume (jittered, rate-limited), and read-only. We do not write data to Instagram.
+- **Visuals Matter**: The Admin UI for the user needs to be aesthetic (Vanilla CSS, "Premium" feel).
+
+## 2. Current State (as of Dec 2025)
+
+- **Scraper**: Functional. Uses **Network Interception** (Playwright `waitForResponse`) to capture `graphql/query` JSON responses.
+    - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
+- **Curation**: Implemented. Score = `engagement * recency_decay`.
+- **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
+- **Notifications**: Web Push (VAPID) enabled.
+- **Frontend**: Vanilla JS PWA. Lists curated posts, allows manual triggering of runs.
+
+**Known Issues**:
+- Instagram might prompt for login or challenge occasionally (handled via `auth.ts` manual login flow).
+- "Stuck" runs can block future executions (Automated fix: Server startup marks stuck runs as failed).
+
+## 3. How to Run
+
+```bash
+# Install
+npm install
+
+# Run (Server + Scheduler + Watch mode)
+npm run dev
+
+# Build
+npm run build
+```
+
+**Key Commands**:
+- `npm run dev`: Starts the TypeScript watcher and Express server.
+- `npx playwright test`: (If tests are added later).
+
+## 4. Agent Rules of Engagement
+
+1.  **Do NOT refactor to DOM scraping**: We explicitly moved TO network interception. Do not revert this without strong evidence.
+2.  **Schema Changes**: Always use `db/migrations.ts`. Check `try...catch` blocks for column additions to support existing DBs.
+3.  **Dependency Discipline**: Do not add large framework dependencies (React, specialized UI libs) for the PWA. Keep it Vanilla/Lightweight.
+4.  **Artifacts**: Update `docs/STATE.md` if you add a major feature.
+
+## 5. Navigation
+
+- **[System Overview](docs/README.md)**: Architecture and subsystems.
+- **[Current Reality](docs/STATE.md)**: Detailed feature status and roadmap.
+- **[Code Map](docs/CODEBASE_MAP.md)**: Where logic lives.
+- **[Glossary](docs/GLOSSARY.md)**: Key terms (`Run`, `Score`, etc.).
+- **[Decisions](docs/adr/)**: "Why did we do this?"
