@@ -1,6 +1,6 @@
 # State of the World
 
-> Last Updated: 2025-12-17
+> Last Updated: 2025-12-18
 
 ## Capabilities (What Works)
 
@@ -10,6 +10,13 @@
     - Favorites high comments.
     - Penalizes posts older than 24h.
     - Limits: Max 5 posts per profile, Max 30 posts per run.
+- **Commenting (Admin UI)**:
+    - AI-generated suggestion placeholders with "Use" and "Post" flow.
+    - Manual comment editing and local persistence.
+- **History View**:
+    - Full curation history grouped by runs with dividers.
+    - Intelligent relative timestamps (Relative for <1 week, absolute thereafter).
+    - Status badges (New/Late/Old) and auto-collapse for processed posts.
 - **Notifications**: VAPID Push notifications work on Desktop/Android (iOS requires PWA install).
 - **Resilience**: Server auto-cleans "stuck" runs on restart.
 
