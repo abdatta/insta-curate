@@ -9,6 +9,7 @@ type CommentSuggestions = { comments: string[] };
 
 export class OpenAIService {
   async generatePostComments(
+    profileHandle: string,
     caption: string,
     imageUrls: string[]
   ): Promise<string[]> {
@@ -32,17 +33,19 @@ You are a social media growth assistant acting on behalf of **Leia**, a young LA
 
 ### Input You Will Receive
 - One or more images from an Instagram post  
+- Author's handle
 - (Optional) The post's caption  
 
 ### Your Task
 Generate **exactly 4 Instagram comments** that Leia should post on this content.
 
 ### Hard Constraints
+- You must understand what the user is trying to convey combining the sequence of image + caption + author's handle.
 - Do NOT use em dashes or long dashes of any kind  
 - Do NOT use AI-like phrasing, corporate tone, or marketing language  
 - Comments must sound fully human and spontaneous  
 - Prefer light punctuation and at least one emoji per comment, but do not overuse them
-- No hashtags  
+- No hashtags
 
 ### Comment Objectives
 - Increase visibility and profile curiosity  
@@ -65,15 +68,17 @@ Generate **exactly 4 Instagram comments** that Leia should post on this content.
 
 ### Variation Requirement
 Each of the 4 comments must have a **distinct intent**:
-1. Visual or aesthetic observation  
-2. Curiosity or light question  
-3. Mood or emotional reaction  
-4. Personality-based or situational response  
+1. If it is a meme, react to it. Say if it is relatable or something witty.
+2. If not meme, you may speak on visual or aesthetic observation  
+3. Curiosity or light question 
+4. Mood or emotional reaction
+5. Personality-based or situational response  
         `,
         input: [
           {
             role: "user",
             content: [
+              { type: "input_text", text: `Author: @${profileHandle}` },
               { type: "input_text", text: `Caption: ${caption}` },
               ...imageUrls.map((url) => ({
                 type: "input_image" as const,

@@ -23,8 +23,12 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
   else if (ageHours < 48) { badgeClass = 'badge-late'; badgeText = 'Late'; }
   else { badgeClass = 'badge-old'; badgeText = 'Old'; isOld = true; }
 
-  const hasLiked = !!post.hasLiked;
-  const hasCommented = !!post.userComment;
+  // Local state for immediate UI updates
+  const [localHasLiked, setLocalHasLiked] = useState(!!post.hasLiked);
+  const [localUserComment, setLocalUserComment] = useState(post.userComment);
+
+  const hasLiked = localHasLiked;
+  const hasCommented = !!localUserComment;
   
   // Collapsed state
   const [collapsed, setCollapsed] = useState(isOld || hasLiked || hasCommented);
@@ -40,10 +44,19 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
     setPosting(true);
     try {
       await api.postComment(post.shortcode, commentText);
+      
+      // Update local state immediately
+      setLocalUserComment(commentText);
+      setLocalHasLiked(true);
+      
       setCommentText('');
       if (onCommentPosted) onCommentPosted();
-    } catch (err) {
-      alert('Failed to post comment');
+    } catch (err: any) {
+      console.error(err);
+      // Try to extract message if catch caught the fetch error or response error
+      // Note: api.postComment likely throws an error. We need to check how api service handles it.
+      // Assuming api wrapper throws an Error with message.
+      alert(`Failed to post comment: ${err.message || 'Unknown error'}`);
     } finally {
       setPosting(false);
     }
@@ -84,12 +97,18 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
           <div class="post-comment-section">
             {hasCommented ? (
               <div class="saved-comment">
-                <strong>Your Comment:</strong>
-                {post.userComment}
+                <strong>Your Comment</strong>
+                {localUserComment}
               </div>
             ) : (
              !hasLiked && !isOld && (
-                <div>
+                <div class="comment-section-wrapper">
+                   {posting && (
+                      <div class="comment-overlay">
+                          <div class="spinner"></div>
+                          <span>Posting comment...</span>
+                      </div>
+                   )}
                    <div class="suggestion-area">
                      <div class="suggestion-label">Suggested comments:</div>
                      <div class="suggestion-buttons">
@@ -133,14 +152,31 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
             )}
           </div>
 
-          <div class="post-stats">
-            <span>Rank #{rank}</span>
-            <span>Score: {post.score.toFixed(2)}</span>
-            <span>Comments: {post.commentCount}</span>
-            <span>Likes: {post.likeCount}</span>
+          <div class="post-footer">
+            <div class="post-stats">
+              <span class="stat-item" title="Rank">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                #{rank}
+              </span>
+              <span class="stat-item" title="Score">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                 {post.score.toFixed(1)}
+              </span>
+              <span class="stat-item" title="Comments">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                {post.commentCount}
+              </span>
+              <span class="stat-item" title="Likes">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {post.likeCount}
+              </span>
+            </div>
+            
+            <a href={post.postUrl || `https://www.instagram.com/p/${post.shortcode}`} target="_blank" class="post-link">
+              Open 
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
           </div>
-          
-          <a href={post.postUrl || `https://www.instagram.com/p/${post.shortcode}`} target="_blank" class="post-link">Open in Instagram</a>
         </div>
       </div>
     </article>

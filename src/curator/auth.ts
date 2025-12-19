@@ -2,7 +2,8 @@ import { chromium, BrowserContext, Page } from 'playwright';
 import path from 'path';
 import fs from 'fs';
 
-const STORAGE_STATE_PATH = path.join(process.cwd(), 'data', 'storageState.json');
+// Export constant so other modules can use the same state path
+export const STORAGE_STATE_PATH = path.join(process.cwd(), 'data', 'storageState.json');
 
 export async function getContext(): Promise<{ context: BrowserContext; browser: any }> {
   // If storage state exists, use it

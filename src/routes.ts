@@ -14,7 +14,8 @@ import {
   deleteProfile,
   setProfileEnabled,
   saveSubscription,
-  updatePostComment
+  updatePostComment,
+  updatePostLikeStatus
 } from './db/repo';
 import { runCuration } from './curator/runCuration';
 import { getVapidPublicKey } from './push/vapid';
@@ -37,7 +38,7 @@ router.get('/curated/latest', (req, res) => {
 });
 
 // POST /api/posts/:shortcode/comment
-router.post('/posts/:shortcode/comment', (req, res) => {
+router.post('/posts/:shortcode/comment', async (req, res) => {
     const { shortcode } = req.params;
     const { comment } = req.body;
     
@@ -45,8 +46,17 @@ router.post('/posts/:shortcode/comment', (req, res) => {
         return res.status(400).json({ error: 'Comment required' });
     }
     
-    updatePostComment(shortcode, comment);
-    res.json({ success: true, shortcode });
+    try {
+        const { publishCommentToInstagram } = await import('./curator/commenter');
+        await publishCommentToInstagram(shortcode, comment);
+
+        updatePostComment(shortcode, comment);
+        updatePostLikeStatus(shortcode, true);
+        res.json({ success: true, shortcode });
+    } catch (e: any) {
+        console.error('Failed to post comment:', e);
+        res.status(500).json({ error: e.message || 'Failed to post comment to Instagram' });
+    }
 });
 
 // POST /api/posts/:shortcode/generate-comments
@@ -67,7 +77,7 @@ router.post('/posts/:shortcode/generate-comments', async (req, res) => {
         const mediaUrls = post.mediaUrls || [];
         
         const ai = new OpenAIService();
-        const suggestions = await ai.generatePostComments(post.caption || '', mediaUrls.slice(0, 5));
+        const suggestions = await ai.generatePostComments(post.profileHandle, post.caption || '', mediaUrls.slice(0, 10));
         
         if (suggestions && suggestions.length > 0) {
             updatePostSuggestions(shortcode, suggestions); // Repo now handles serialization

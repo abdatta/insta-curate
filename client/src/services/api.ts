@@ -82,7 +82,14 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ comment }),
     });
-    if (!res.ok) throw new Error('Failed to save comment');
+    if (!res.ok) {
+        let message = 'Failed to post comment';
+        try {
+            const errData = await res.json();
+            if (errData.error) message = errData.error;
+        } catch {}
+        throw new Error(message);
+    }
   },
 
   async generateComments(shortcode: string): Promise<string[]> {

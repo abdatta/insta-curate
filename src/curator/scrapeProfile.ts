@@ -8,7 +8,7 @@ export type PostData = {
   mediaType: number;
   caption: string | null;
   accessibilityCaption: string | null;
-  username: string | null;
+  username: string;
   hasLiked: boolean;
   mediaUrls: string[];
 };
@@ -96,15 +96,23 @@ export async function scrapeProfile(page: Page, handle: string): Promise<PostDat
                 }
             }
 
+            const postedAt = node.taken_at ? new Date(node.taken_at * 1000).toISOString() : null;
+            
+            // Skip invalid dates (e.g. 1970)
+            if (!postedAt || new Date(postedAt).getFullYear() < 2010) {
+                 console.warn(`Skipping post ${node.code} due to invalid date: ${postedAt}`);
+                 continue;
+            }
+
             posts.push({
                 shortcode: node.code || node.shortcode,
-                postedAt: node.taken_at ? new Date(node.taken_at * 1000).toISOString() : null,
+                postedAt: postedAt,
                 commentCount: node.comment_count || 0,
                 likeCount: node.like_count || node.edge_liked_by?.count || 0,
                 mediaType: mediaType,
                 caption: captionText,
                 accessibilityCaption: node.accessibility_caption || null,
-                username: node.user?.username || null,
+                username: node.user.username,
                 hasLiked: !!node.has_liked,
                 mediaUrls
             });

@@ -1,8 +1,11 @@
-export enum MediaType {
-  Image = 1,
-  Video = 2,
-  Carousel = 8
-}
+// Use const object instead of enum to support erasableSyntaxOnly/isolatedModules
+export const MediaType = {
+  Image: 1,
+  Video: 2,
+  Carousel: 8
+} as const;
+
+export type MediaType = (typeof MediaType)[keyof typeof MediaType];
 
 // API Response Shape (Data Transfer Object)
 export interface Post {

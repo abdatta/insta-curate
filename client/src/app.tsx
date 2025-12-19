@@ -62,13 +62,13 @@ export function App() {
                         const posts = data.posts;
                         if (posts.length === 0) return <p>No posts found.</p>;
                         
-                        const latestRunId = data.latestSuccessfulRunId || (posts.length > 0 ? posts[0].run_id : null);
+                        // Use the run_id of the first post as the "Latest Run" for display purposes
+                        // This ensures we don't show a divider at the top if the actual latest run was empty
+                        const topRunId = posts.length > 0 ? posts[0].runId : null;
                         
                         return posts.map((post, idx) => {
-                            // User request: "divider between posts from last run and previous runs"
-                            // So we just need to detect when we transition from "Latest Run" to "Older"
-                            
-                            const showDivider = latestRunId && post.run_id !== latestRunId && (idx === 0 || posts[idx-1].run_id === latestRunId);
+                            // Show divider only when transitioning from the Top Run to an Older Run
+                            const showDivider = topRunId && idx > 0 && post.runId !== topRunId && posts[idx-1].runId === topRunId;
 
                             return (
                                 <>

@@ -170,7 +170,7 @@ const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post 
   profileHandle: row.profile_handle,
   postUrl: row.post_url,
   shortcode: row.shortcode,
-  postedAt: new Date(row.posted_at), // Handles timestamp number or ISO string
+  postedAt: new Date(+row.posted_at), // Handles timestamp number or ISO string
   commentCount: row.comment_count,
   likeCount: row.like_count,
   score: row.score,
@@ -216,6 +216,10 @@ export const updatePostComment = (shortcode: string, comment: string) => {
 
 export const updatePostSuggestions = (shortcode: string, suggestions: string[]) => {
     db.prepare('UPDATE posts SET suggested_comments = ? WHERE shortcode = ?').run(JSON.stringify(suggestions), shortcode);
+};
+
+export const updatePostLikeStatus = (shortcode: string, hasLiked: boolean) => {
+    db.prepare('UPDATE posts SET has_liked = ? WHERE shortcode = ?').run(hasLiked ? 1 : 0, shortcode);
 };
 
 export const getPostByShortcode = (shortcode: string): Post | undefined => {

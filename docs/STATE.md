@@ -12,9 +12,13 @@
     - Favorites high comments.
     - Penalizes posts older than 24h.
     - Limits: Max 5 posts per profile, Max 30 posts per run.
-- **Commenting (Admin UI)**:
-    - **AI Suggestions**: Live, on-demand generation using **OpenAI (gpt-5-nano)** with Structured Outputs.
-    - **Async Workflow**: Generation happens in parallel with scraping or on-demand via UI.
+- **Automation**:
+    - **Commenting**: Playwright-based automation that **Likes** and **Comments** on posts via a visible browser session (`headless: false`, `slowMo`).
+    - **Error Handling**: Captures screenshots of failures to `data/screenshots` and alerts the UI.
+    - **AI Engine**: Enhanced `gpt-5-nano` prompt that treats Media + Caption + Profile Handle as a single context. Explicitly detects memes for witty reactions vs aesthetic observations for regular posts.
+- **Admin UI**:
+    - **Comment Flow**: Supports AI suggestion review, manual editing, and automated posting. Features a spinner overlay and "premium" saved state.
+    - **Optimized Layout**: Compact footer stats and refined density.
     - **UI**: Regenerate button, row-based layout for easy reading.
 - **History View**:
     - Full curation history grouped by runs with dividers.

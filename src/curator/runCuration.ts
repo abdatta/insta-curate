@@ -110,7 +110,7 @@ export async function runCuration() {
                      
                      await Promise.all(aiTargets.map(async (p) => {
                          const mediaUrls = p.mediaUrls.slice(0, 5); // Max 5 images
-                         const comments = await ai.generatePostComments(p.caption || '', mediaUrls);
+                         const comments = await ai.generatePostComments(p.handle, p.caption || '', mediaUrls);
                          if (comments && comments.length > 0) {
                              (p as any).suggestedComments = comments; // Attach back to reference object
                          }

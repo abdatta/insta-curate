@@ -52,4 +52,4 @@
 3.  **Process**: Filter posts -> Async AI Comment Generation -> Calculate Score -> Select top posts.
 4.  **Store**: Save to `posts` table (UPSERT).
 5.  **Notify**: Send Web Push to all subscribed clients.
-6.  **Review**: User opens PWA -> Views "New" posts -> Reviews/Regenerates AI suggestion -> Clicks "Post" (Saves locally).
+6.  **Review**: User opens PWA -> Views "New" posts -> Reviews/Regenerates AI suggestion -> Clicks "Post" (Automated Browser Action: Like & Comment).

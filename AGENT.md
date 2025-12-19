@@ -8,7 +8,7 @@
 
 **Constraints & Non-Goals**:
 - **NOT a SaaS**: Use local storage (SQLite), local execution (Playwright on dev machine/server). No multi-tenancy.
-- **NOT an aggressive bot**: scraping is passive (reading timeline), low volume (jittered, rate-limited), and read-only. We do not write data to Instagram.
+- **NOT an aggressive bot**: scraping is passive (reading timeline), low volume, and read-only. **Writing (Likes/Comments)** is user-initiated and rate-limited by manual speed.
 - **Visuals Matter**: The Admin UI for the user needs to be aesthetic (Vanilla CSS, "Premium" feel).
 
 ## 2. Current State (as of Dec 2025)
@@ -17,7 +17,7 @@
     - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
 - **Curation**: Implemented. Score = `engagement * recency_decay`.
 - **Admin UI**:
-    - **Comment Flow**: Supports AI suggestion review, manual editing, and local persistence of `user_comment`.
+    - **Comment Flow**: Supports AI suggestion review, manual editing, and **Automated Posting** (launches visible browser to Like & Comment).
     - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
 - **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
 - **Notifications**: Web Push (VAPID) enabled.
