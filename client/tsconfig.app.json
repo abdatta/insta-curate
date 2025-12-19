@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "paths": {
       "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react-dom": ["./node_modules/preact/compat/"],
+      "@shared/*": ["../shared/*"]
     },
 
     /* Bundler mode */
@@ -27,7 +28,8 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": "."
   },
-  "include": ["src"]
+  "include": ["src", "../shared"]
 }

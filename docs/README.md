@@ -1,6 +1,6 @@
 # System Overview
 
-**Product**: `insta-act` is a self-hosted curator that logs into your Instagram, scans specific "quality" profiles, and extracts the highest-signal posts for you to view in a quiet, ad-free PWA.
+**Product**: `insta-curate` is a self-hosted curator that logs into your Instagram, scans specific "quality" profiles, and extracts the highest-signal posts for you to view in a quiet, ad-free PWA.
 
 ## High-Level Architecture
 

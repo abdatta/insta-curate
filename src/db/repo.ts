@@ -40,6 +40,20 @@ export const upsertProfiles = (handles: string[]) => {
   transact();
 };
 
+export const addProfile = (handle: string) => {
+    const clean = handle.trim();
+    if (!clean) return;
+    const info = db.prepare('INSERT OR IGNORE INTO profiles (handle, is_enabled) VALUES (?, 1)').run(clean);
+    // If it existed but was disabled/enabled, ensure enabled?
+    // Requirement "add new profiles". If it exists, let's just make sure it's enabled.
+    db.prepare('UPDATE profiles SET is_enabled = 1 WHERE handle = ?').run(clean);
+    return info;
+};
+
+export const deleteProfile = (handle: string) => {
+    db.prepare('DELETE FROM profiles WHERE handle = ?').run(handle);
+};
+
 export const setProfileEnabled = (handle: string, enabled: boolean) => {
     db.prepare('UPDATE profiles SET is_enabled = ? WHERE handle = ?').run(enabled ? 1 : 0, handle);
 };

@@ -1,4 +1,4 @@
-import { TASK_INITIALIZING } from '../constants';
+import { TASK_INITIALIZING } from '@shared/constants';
 
 export type TaskStatus = 'pending' | 'processing' | 'done' | 'failed' | 'skipped';
 

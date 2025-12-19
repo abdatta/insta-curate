@@ -1,6 +1,6 @@
 # AI Agent Entry Point
 
-> **Read this first.** This file defines the context, goals, and rules for working on the `insta-act` repository.
+> **Read this first.** This file defines the context, goals, and rules for working on the `insta-curate` repository.
 
 ## 1. North Star & Constraints
 

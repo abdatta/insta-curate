@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
+
+import type { Task, Profile } from '../types';
 import { api } from '../services/api';
-import type { Task } from '../types';
+import { TASK_INITIALIZING, TASK_DONE } from '@shared/constants';
 import '../styles/components/Settings.css';
 
 interface SettingsProps {
@@ -8,7 +10,8 @@ interface SettingsProps {
 }
 
 export function Settings({ onRunComplete }: SettingsProps) {
-  const [profiles, setProfiles] = useState('');
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [newProfile, setNewProfile] = useState('');
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
   const [scheduleInterval, setScheduleInterval] = useState(4);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,7 @@ export function Settings({ onRunComplete }: SettingsProps) {
                 api.getProfiles(),
                 api.getSettings()
             ]);
-            setProfiles(pData.profiles.map(p => p.handle).join('\n'));
+            setProfiles(pData.profiles);
             setScheduleEnabled(sData.schedule_enabled);
             setScheduleInterval(sData.schedule_interval_hours);
         } catch (e) {
@@ -107,7 +110,23 @@ export function Settings({ onRunComplete }: SettingsProps) {
 
   const handleRunNow = async () => {
     setRunStatus('running');
-    setTasks([{ handle: 'Initializing', status: 'processing', message: 'Starting...' }]);
+    
+    const profileTasks = profiles
+        .filter(p => !!p.is_enabled)
+        .map(p => ({
+            handle: p.handle,
+            status: 'pending' as const,
+            message: 'Waiting...'
+        }));
+    
+    const initialTasks: Task[] = [
+        { handle: TASK_INITIALIZING, status: 'processing', message: 'Starting...' },
+        ...profileTasks,
+        { handle: TASK_DONE, status: 'pending', message: 'Waiting...' }
+    ];
+
+    setTasks(initialTasks);
+
     prevStatusRef.current = 'running';
     completionHandledRef.current = false;
     
@@ -119,14 +138,41 @@ export function Settings({ onRunComplete }: SettingsProps) {
     }
   };
 
-  const saveProfiles = async () => {
-    try {
-        const handles = profiles.split('\n').map(s => s.trim()).filter(Boolean);
-        await api.saveProfiles(handles);
-        alert('Profiles saved');
-    } catch (e) {
-        alert('Error saving profiles');
+  const handleAddProfile = async (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const handle = newProfile.trim();
+        if (!handle) return;
+        
+        try {
+            await api.addProfile(handle);
+            const pData = await api.getProfiles(); // Refresh list to get ID/State
+            setProfiles(pData.profiles);
+            setNewProfile('');
+        } catch (e) {
+            alert('Error adding profile');
+        }
     }
+  };
+
+  const handleDeleteProfile = async (handle: string) => {
+      if (!confirm(`Are you sure you want to delete @${handle}?`)) return;
+      try {
+          await api.deleteProfile(handle);
+          setProfiles(profiles.filter(p => p.handle !== handle));
+      } catch (e) {
+          alert('Error deleting profile');
+      }
+  };
+
+  const handleToggleProfile = async (profile: Profile) => {
+      try {
+          const newState = !profile.is_enabled;
+          await api.toggleProfile(profile.handle, newState);
+          setProfiles(profiles.map(p => p.handle === profile.handle ? { ...p, is_enabled: newState ? 1 : 0 } : p));
+      } catch (e) {
+          alert('Error updating profile');
+      }
   };
 
   const saveSchedule = async (enabled: boolean, interval: number) => {
@@ -142,7 +188,13 @@ export function Settings({ onRunComplete }: SettingsProps) {
       }
   };
 
-  if (loading) return <div>Loading settings...</div>;
+  if (loading) return (
+      <div class="settings-container">
+          <div class="setting-group" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+              Loading settings...
+          </div>
+      </div>
+  );
 
   return (
     <div class="settings-container">
@@ -169,41 +221,72 @@ export function Settings({ onRunComplete }: SettingsProps) {
 
        <div class="setting-group">
             <h3>Schedule</h3>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input 
-                    type="checkbox" 
-                    checked={scheduleEnabled} 
-                    onChange={(e) => saveSchedule(e.currentTarget.checked, scheduleInterval)} 
-                /> 
-                Enable Schedule
-            </label>
-            <div style={{ marginTop: '0.5rem' }}>
-                <select 
-                    value={scheduleInterval} 
-                    onChange={(e) =>saveSchedule(scheduleEnabled, parseInt(e.currentTarget.value))}
-                    style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--color-border)' }}
-                >
-                    <option value="2">Every 2 hours</option>
-                    <option value="4">Every 4 hours</option>
-                    <option value="6">Every 6 hours</option>
-                    <option value="12">Every 12 hours</option>
-                    <option value="24">Every 24 hours</option>
-                </select>
+            <div class="schedule-container">
+                <label class="checkbox-label">
+                    <input 
+                        type="checkbox" 
+                        checked={scheduleEnabled} 
+                        onChange={(e) => saveSchedule(e.currentTarget.checked, scheduleInterval)} 
+                    /> 
+                    Enable Schedule
+                </label>
+                <div class="select-wrapper">
+                    <select 
+                        value={scheduleInterval} 
+                        onChange={(e) =>saveSchedule(scheduleEnabled, parseInt(e.currentTarget.value))}
+                        class="schedule-select"
+                    >
+                        <option value="2">Every 2 hours</option>
+                        <option value="4">Every 4 hours</option>
+                        <option value="6">Every 6 hours</option>
+                        <option value="12">Every 12 hours</option>
+                        <option value="24">Every 24 hours</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="setting-group">
             <h3>Profiles</h3>
-            <p>Enter Instagram handles (one per line):</p>
-            <textarea 
-                rows={10} 
-                value={profiles} 
-                onInput={(e) => setProfiles(e.currentTarget.value)}
-                style={{ width: '100%', padding: '0.5rem', border: '1px solid var(--color-border)', borderRadius: '4px', fontFamily: 'monospace' }}
+            <p>Manage curated accounts. Toggle to pause/resume curation.</p>
+            
+            <input 
+                type="text"
+                placeholder="Add Instagram handle (Press Enter)" 
+                value={newProfile}
+                onInput={(e) => setNewProfile(e.currentTarget.value)}
+                onKeyDown={handleAddProfile}
+                class="profile-input"
             />
-            <button onClick={saveProfiles} style={{ marginTop: '0.5rem', background: 'var(--color-primary)', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px' }}>
-                Save Profiles
-            </button>
+
+            <div class="profile-list">
+                {profiles.map(profile => (
+                    <div key={profile.handle} class={`profile-item ${!profile.is_enabled ? 'disabled' : ''}`}>
+                        <span class="profile-handle">@{profile.handle}</span>
+                        <div class="profile-actions">
+                            <label class="toggle-switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={!!profile.is_enabled}
+                                    onChange={() => handleToggleProfile(profile)}
+                                />
+                                <span class="slider"></span>
+                            </label>
+                            
+                            <button 
+                                class="btn-delete" 
+                                onClick={() => handleDeleteProfile(profile.handle)}
+                                title="Delete Profile"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
         
 

@@ -9,6 +9,7 @@
 | **`push/`** | Notification handling. | `send.ts` (Sending logic), `vapid.ts` (Key storage). |
 | **`main.ts`** | **Entry Point**. Init DB, Scheduler, Server. | |
 | **`routes.ts`** | API Endpoints definition. | |
+| **`shared/`** | Common code shared between Client and Server. | `constants.ts` (Task names). |
 
 ## `client/` (Frontend - Vite + Preact)
 

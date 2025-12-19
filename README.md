@@ -1,4 +1,3 @@
-```
 # Instagram Curator (insta-curate)
 
 > **For AI Agents:** Please refer to [AGENT.md](./AGENT.md) for context, rules, and navigation.
@@ -39,7 +38,7 @@ A minimal Node.js + TypeScript PWA that curates Instagram posts from your feed b
 ## Usage
 1. Open `http://localhost:3000` in your browser.
 2. Go to **Settings** tab.
-3. Add Instagram handles to monitor (one per line).
+3. Add, toggle, or remove Instagram handles individually using the new Profile Manager.
 4. Click **Run Curation Now** to test immediately and watch the progress tasks.
 5. Enable Notifications to get status updates.
 

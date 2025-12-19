@@ -46,6 +46,12 @@ export interface Settings {
   schedule_interval_hours: number;
 }
 
+export interface Profile {
+  id: number;
+  handle: string;
+  is_enabled: number;
+}
+
 export interface ProfilesResponse {
-  profiles: { handle: string }[];
+  profiles: Profile[];
 }

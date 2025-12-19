@@ -10,6 +10,9 @@ import {
   setSetting, 
   upsertProfiles, 
   getAllProfiles,
+  addProfile,
+  deleteProfile,
+  setProfileEnabled,
   saveSubscription,
   updatePostComment
 } from './db/repo';
@@ -123,16 +126,50 @@ router.get('/admin/profiles', (req, res) => {
 });
 
 // POST /api/admin/profiles
-router.post('/admin/profiles', (req, res) => {
+router.post('/api/admin/profiles', (req, res) => {
+  // Keeping this for backward compatibility if needed, or remove? 
+  // Plan says remove "Save Profiles" button. But let's keep it harmless or redirect to new logic? 
+  // It's safer to leave it or update it to use new logic if the client still calls it during transition.
+  // Actually, let's REPLACE the mass sync with the new endpoints in the client.
+  // But for the router, I'll add the new ones.
   const { handles } = req.body; // array of strings
   if (Array.isArray(handles)) {
-      // Sync
-      const { syncProfiles } = require('./db/repo'); // Lazy import if needed or just use import
+      const { syncProfiles } = require('./db/repo'); 
       syncProfiles(handles);
       res.json({ success: true });
   } else {
       res.status(400).json({ error: 'Invalid handles' });
   }
+});
+
+// POST /api/admin/profiles/add
+router.post('/admin/profiles/add', (req, res) => {
+    const { handle } = req.body;
+    if (typeof handle === 'string' && handle.trim().length > 0) {
+        addProfile(handle);
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ error: 'Invalid handle' });
+    }
+});
+
+// DELETE /api/admin/profiles/:handle
+router.delete('/admin/profiles/:handle', (req, res) => {
+    const { handle } = req.params;
+    deleteProfile(handle);
+    res.json({ success: true });
+});
+
+// PATCH /api/admin/profiles/:handle/toggle
+router.patch('/admin/profiles/:handle/toggle', (req, res) => {
+    const { handle } = req.params;
+    const { enabled } = req.body;
+    if (typeof enabled === 'boolean') {
+        setProfileEnabled(handle, enabled);
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ error: 'Invalid enabled status' });
+    }
 });
 
 // POST /api/push/subscribe

@@ -38,6 +38,31 @@ export const api = {
     });
   },
 
+  async addProfile(handle: string): Promise<void> {
+    const res = await fetch('/api/admin/profiles/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ handle }),
+    });
+    if (!res.ok) throw new Error('Failed to add profile');
+  },
+
+  async deleteProfile(handle: string): Promise<void> {
+    const res = await fetch(`/api/admin/profiles/${handle}`, {
+        method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete profile');
+  },
+
+  async toggleProfile(handle: string, enabled: boolean): Promise<void> {
+      const res = await fetch(`/api/admin/profiles/${handle}/toggle`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled })
+      });
+      if (!res.ok) throw new Error('Failed to toggle profile');
+  },
+
   async getSettings(): Promise<Settings> {
     const res = await fetch('/api/admin/settings');
     return res.json();

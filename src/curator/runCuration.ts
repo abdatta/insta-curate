@@ -1,5 +1,5 @@
 import { getContext } from './auth';
-import { TASK_INITIALIZING, TASK_DONE } from '../constants';
+import { TASK_INITIALIZING, TASK_DONE } from '@shared/constants';
 import { scrapeProfile, PostData } from './scrapeProfile';
 import * as repo from '../db/repo';
 import { sendPushNotification } from '../push/send';
