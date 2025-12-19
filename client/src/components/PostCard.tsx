@@ -57,6 +57,7 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
   const handlePostComment = async () => {
     if (!commentText.trim()) return;
     setPosting(true);
+    window.instaCurateBusy = true;
     try {
       await api.postComment(post.shortcode, commentText);
       
@@ -74,6 +75,7 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
       alert(`Failed to post comment: ${err.message || 'Unknown error'}`);
     } finally {
       setPosting(false);
+      window.instaCurateBusy = false;
     }
   };
 
@@ -136,6 +138,7 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
                          disabled={generating}
                          onClick={async () => {
                              setGenerating(true);
+                             window.instaCurateBusy = true;
                              try {
                                  const comments = await api.generateComments(post.shortcode);
                                  setSuggestions(comments);
@@ -144,6 +147,7 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
                                  alert('Failed to generate suggestions');
                              } finally {
                                  setGenerating(false);
+                                 window.instaCurateBusy = false;
                              }
                          }} 
                        >

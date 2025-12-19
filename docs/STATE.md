@@ -26,7 +26,7 @@
     - **Frontend**: Vite + Preact + TypeScript PWA.
     - **Progress UI**: Real-time visualization of curation tasks.
     - **Run Control**: Manual trigger via UI.
-    - **Offline Capable**: Service Worker caching.
+    - **Offline Capable**: Service Worker caching with smart **Auto-Updates** (reloads on new build unless busy).
     - **Status badges** (New/Late/Old/Seen) and auto-collapse for processed posts.
     - **Granular Profile Management**: Add, delete, and toggle individual profiles.
     - **Architecture**:
