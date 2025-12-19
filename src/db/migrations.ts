@@ -60,6 +60,7 @@ export function runMigrations() {
   try { db.exec("ALTER TABLE posts ADD COLUMN user_comment TEXT"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN suggested_comments TEXT"); } catch (e) {}
   try { db.exec("ALTER TABLE posts ADD COLUMN media_urls TEXT"); } catch (e) {}
+  try { db.exec("ALTER TABLE posts ADD COLUMN seen INTEGER DEFAULT 0"); } catch (e) {}
   
   console.log('Migrations run successfully');
 }

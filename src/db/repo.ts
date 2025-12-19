@@ -119,6 +119,7 @@ export type DbPost = {
   user_comment?: string | null;
   suggested_comments?: string | null; // JSON string
   media_urls?: string | null; // JSON string
+  seen?: number;
 };
 
 // Domain Object (extends shared definition logic but with distinct Date type)
@@ -140,6 +141,7 @@ export type Post = {
   userComment?: string | null;
   suggestedComments?: string[];
   mediaUrls?: string[];
+  seen: boolean;
   // Extra fields from joins
   runDate?: string; 
   runStatus?: string;
@@ -162,7 +164,8 @@ const toDb = (p: Post): DbPost => ({
   username: p.username,
   user_comment: p.userComment,
   suggested_comments: p.suggestedComments ? JSON.stringify(p.suggestedComments) : null,
-  media_urls: p.mediaUrls ? JSON.stringify(p.mediaUrls) : null
+  media_urls: p.mediaUrls ? JSON.stringify(p.mediaUrls) : null,
+  seen: p.seen ? 1 : 0
 });
 
 const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post => ({
@@ -183,14 +186,15 @@ const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post 
   userComment: row.user_comment,
   suggestedComments: row.suggested_comments ? JSON.parse(row.suggested_comments) : [],
   mediaUrls: row.media_urls ? JSON.parse(row.media_urls) : [],
+  seen: !!row.seen,
   runDate: row.run_date,
   runStatus: row.run_status
 });
 
 export const savePosts = (posts: Post[]) => {
   const insert = db.prepare(`
-    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment, media_urls, suggested_comments)
-    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment, @media_urls, @suggested_comments)
+    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment, media_urls, suggested_comments, seen)
+    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment, @media_urls, @suggested_comments, @seen)
     ON CONFLICT(shortcode) DO UPDATE SET
       run_id = excluded.run_id,
       comment_count = excluded.comment_count,
@@ -202,7 +206,8 @@ export const savePosts = (posts: Post[]) => {
       has_liked = excluded.has_liked,
       username = excluded.username,
       media_urls = excluded.media_urls,
-      suggested_comments = excluded.suggested_comments
+      suggested_comments = excluded.suggested_comments,
+      seen = excluded.seen
   `);
   const insertMany = db.transaction((posts: Post[]) => {
     for (const post of posts) insert.run(toDb(post));
@@ -220,6 +225,10 @@ export const updatePostSuggestions = (shortcode: string, suggestions: string[]) 
 
 export const updatePostLikeStatus = (shortcode: string, hasLiked: boolean) => {
     db.prepare('UPDATE posts SET has_liked = ? WHERE shortcode = ?').run(hasLiked ? 1 : 0, shortcode);
+};
+
+export const updatePostSeenStatus = (shortcode: string, seen: boolean) => {
+    db.prepare('UPDATE posts SET seen = ? WHERE shortcode = ?').run(seen ? 1 : 0, shortcode);
 };
 
 export const getPostByShortcode = (shortcode: string): Post | undefined => {

@@ -26,6 +26,7 @@ export interface Post {
   userComment?: string | null;
   suggestedComments?: string[];
   mediaUrls?: string[];
+  seen: boolean;
   
   // Joins
   runDate?: string;

@@ -59,6 +59,25 @@ router.post('/posts/:shortcode/comment', async (req, res) => {
     }
 });
 
+// PATCH /api/posts/:shortcode/seen
+router.patch('/posts/:shortcode/seen', (req, res) => {
+    const { shortcode } = req.params;
+    const { seen } = req.body;
+    
+    if (typeof seen !== 'boolean') {
+        return res.status(400).json({ error: 'Seen status required (boolean)' });
+    }
+    
+    try {
+        const { updatePostSeenStatus } = require('./db/repo');
+        updatePostSeenStatus(shortcode, seen);
+        res.json({ success: true, shortcode, seen });
+    } catch (e: any) {
+        console.error('Failed to update seen status:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // POST /api/posts/:shortcode/generate-comments
 router.post('/posts/:shortcode/generate-comments', async (req, res) => {
     const { shortcode } = req.params;

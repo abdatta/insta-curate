@@ -27,7 +27,7 @@
     - **Progress UI**: Real-time visualization of curation tasks.
     - **Run Control**: Manual trigger via UI.
     - **Offline Capable**: Service Worker caching.
-    - **Status badges** (New/Late/Old) and auto-collapse for processed posts.
+    - **Status badges** (New/Late/Old/Seen) and auto-collapse for processed posts.
     - **Granular Profile Management**: Add, delete, and toggle individual profiles.
     - **Architecture**:
         - **Shared Types**: Single source of truth (`shared/types.ts`) for Client/Server API contracts.

@@ -96,9 +96,13 @@ export async function runCuration() {
         const aiTask = async () => {
             try {
                 // Filter for "Unliked" AND ("Image" OR "Carousel")
+                // AND not seen
+                // AND no suggestions yet
                 const aiTargets = profileCandidates.filter(p => 
                     !p.hasLiked && 
-                    (p.mediaType === 1 || p.mediaType === 8)
+                    (p.mediaType === 1 || p.mediaType === 8) &&
+                    !(p as any).seen &&
+                    (!(p as any).suggestedComments || (p as any).suggestedComments.length === 0)
                 );
 
                 if (aiTargets.length > 0) {
@@ -175,7 +179,8 @@ export async function runCuration() {
       username: p.username,
       userComment: null,
       suggestedComments: (p as any).suggestedComments || [],
-      mediaUrls: p.mediaUrls || []
+      mediaUrls: p.mediaUrls || [],
+      seen: (p as any).seen || false
     } as repo.Post));
     
     progress.updateTaskStatus(TASK_DONE, 'processing');

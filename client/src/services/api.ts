@@ -99,5 +99,14 @@ export const api = {
       if (!res.ok) throw new Error('Failed to generate comments');
       const data = await res.json();
       return data.comments;
+  },
+
+  async markSeen(shortcode: string, seen: boolean): Promise<void> {
+      const res = await fetch(`/api/posts/${shortcode}/seen`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ seen })
+      });
+      if (!res.ok) throw new Error('Failed to update seen status');
   }
 };
