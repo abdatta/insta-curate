@@ -38,11 +38,18 @@
     - **Capabilities**: Installable PWA (Offline + Push), Modern reactive UI, Dark Mode.
     - **Build**: `npm run build` outputs to `client/dist`, served by Express.
 
+5.  **The AI Service (`src/services/ai.ts`)**
+    - **Tech**: OpenAI API (`gpt-5-nano`), Structured Outputs (JSON Schema).
+    - **Role**: Analyze captions/images to suggest engaging, persona-based comments.
+
+6.  **Shared Module (`shared/`)**
+    - **Role**: TypeScript interfaces (`Post`) and Enums (`MediaType`) shared between Client and Server to ensure type safety.
+
 ## Data Flow
 
 1.  **Trigger**: User clicks "Run Now" OR Scheduler fires.
-2.  **Scrape**: Browser opens -> Login check -> Visit Profiles -> Intercept JSON.
-3.  **Process**: Filter posts by date -> Calculate Score -> Select top N posts per profile -> Select top M global posts.
+2.  **Scrape**: Browser opens -> Login check -> Visit Profiles -> Intercept JSON (High-Res Media).
+3.  **Process**: Filter posts -> Async AI Comment Generation -> Calculate Score -> Select top posts.
 4.  **Store**: Save to `posts` table (UPSERT).
 5.  **Notify**: Send Web Push to all subscribed clients.
-6.  **Review**: User opens PWA -> Views "New" posts -> Selects/Edits AI suggestion -> Clicks "Post" (Saves locally).
+6.  **Review**: User opens PWA -> Views "New" posts -> Reviews/Regenerates AI suggestion -> Clicks "Post" (Saves locally).

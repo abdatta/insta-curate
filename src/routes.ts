@@ -49,6 +49,38 @@ router.post('/posts/:shortcode/comment', (req, res) => {
     res.json({ success: true, shortcode });
 });
 
+// POST /api/posts/:shortcode/generate-comments
+router.post('/posts/:shortcode/generate-comments', async (req, res) => {
+    const { shortcode } = req.params;
+    
+    // Import here to avoid circular dependencies if any, or just lazily load service
+    const { getPostByShortcode, updatePostSuggestions } = await import('./db/repo');
+    const { OpenAIService } = await import('./services/ai');
+    
+    try {
+        const post = getPostByShortcode(shortcode);
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        
+        // Post is now type `Post` with clean fields
+        const mediaUrls = post.mediaUrls || [];
+        
+        const ai = new OpenAIService();
+        const suggestions = await ai.generatePostComments(post.caption || '', mediaUrls.slice(0, 5));
+        
+        if (suggestions && suggestions.length > 0) {
+            updatePostSuggestions(shortcode, suggestions); // Repo now handles serialization
+            res.json({ success: true, comments: suggestions });
+        } else {
+            res.status(500).json({ error: 'Failed to generate comments' });
+        }
+    } catch (error: any) {
+        console.error('Generation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // POST /api/admin/run
 router.post('/admin/run', async (req, res) => {
   // Check if running?

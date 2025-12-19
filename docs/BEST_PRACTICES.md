@@ -38,6 +38,7 @@ Documentation is not "fire and forget". It must be kept in sync with code.
     - Append new `CREATE TABLE` or `ALTER TABLE` statements at the end of `runMigrations()` in `src/db/migrations.ts`.
     - Wrap `ALTER TABLE` in `try/catch` to ensure idempotency (re-running properly avoids crashing if column exists).
 - **Type Safety**:
+    - **Use Shared Types**: Define data structures used by both Client and Server in `shared/types.ts`.
     - Avoid `any`.
     - Define types for API responses (like `PostData`) explicitly.
 - **Frontend / PWA**:

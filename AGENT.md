@@ -21,7 +21,7 @@
     - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
 - **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
 - **Notifications**: Web Push (VAPID) enabled.
-- **Frontend**: Vite + Preact + TypeScript PWA. Lists curated posts, allows manual triggering of runs (with progress UI), and supports comment approval workflow.
+- **Frontend**: Vite + Preact + TypeScript PWA. Uses **Shared Types** for strict API contracts. Lists curated posts, allows manual triggering of runs (with progress UI), and supports comment approval workflow.
 
 **Known Issues**:
 - Instagram might prompt for login or challenge occasionally (handled via `auth.ts` manual login flow).
@@ -49,7 +49,8 @@ npm run build
 1.  **Do NOT refactor to DOM scraping**: We explicitly moved TO network interception. Do not revert this without strong evidence.
 2.  **Schema Changes**: Always use `db/migrations.ts`. Check `try...catch` blocks for column additions to support existing DBs.
 3.  **Dependency Discipline**: Do not add large framework dependencies (e.g. Next.js, full React) unnecessarily. We use **Preact** for the PWA to balance component architecture with lightweight footprint.
-4.  **Artifacts**: Update `docs/STATE.md` if you add a major feature.
+4.  **Shared Contracts**: ALWAYS use `shared/types.ts` for data structures exchanged between Client and Server. Do not duplicate interfaces.
+5.  **Artifacts**: Update `docs/STATE.md` if you add a major feature.
 
 ## 5. Navigation
 

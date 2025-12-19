@@ -57,41 +57,87 @@ export async function runCuration() {
 
     let allCandidates: (PostData & { url: string; handle: string; score: number })[] = [];
 
+    const aiPromises: Promise<void>[] = [];
+    const ai = new (await import('../services/ai')).OpenAIService();
+
     for (const profile of enabledProfiles) {
       // START TASK
       progress.updateTaskStatus(profile.handle, 'processing');
-      // progress.currentProfileIndex++ is implicit by iteration or we can track it manually if we wanted exact index
       
       try {
+        // Synchronous Scraping (Browser context is unique/single-threaded for this tab)
         const posts = await scrapeProfile(page, profile.handle);
         
-        // Jitter delay
+        // Jitter delay (Scraping interval)
         await page.waitForTimeout(1000 + Math.random() * 2000);
 
         let profileCandidateCount = 0;
+        const profileCandidates: (PostData & { url: string; handle: string; score: number; suggestedComments?: string[] })[] = [];
 
-        // Process posts directly
+        // Identify candidates immediately
         for (const post of posts) {
             if (post.postedAt) {
-            const score = calculateScore(post);
-            if (score > 0) {
-                allCandidates.push({
-                ...post,
-                url: `https://www.instagram.com/p/${post.shortcode}/`,
-                handle: profile.handle,
-                score
-                });
-                profileCandidateCount++;
-            }
+                const score = calculateScore(post);
+                if (score > 0) {
+                    const candidate = {
+                        ...post,
+                        url: `https://www.instagram.com/p/${post.shortcode}/`,
+                        handle: profile.handle,
+                        score
+                    };
+                    allCandidates.push(candidate);
+                    profileCandidates.push(candidate);
+                    profileCandidateCount++;
+                }
             }
         }
-        
-        progress.updateTaskStatus(profile.handle, 'done', `Found ${profileCandidateCount} candidates`);
+
+        // Async AI Processing
+        const aiTask = async () => {
+            try {
+                // Filter for "Unliked" AND ("Image" OR "Carousel")
+                const aiTargets = profileCandidates.filter(p => 
+                    !p.hasLiked && 
+                    (p.mediaType === 1 || p.mediaType === 8)
+                );
+
+                if (aiTargets.length > 0) {
+                     console.log(`Generating comments for ${aiTargets.length} posts for ${profile.handle}...`);
+                     // Process sequentially per profile to avoid rate limits? Or parallel? 
+                     // Let's do sequential for now to be safe with OpenAI rate limits, or Promise.all if we are bold.
+                     // User said "while we fetch AI response... we can start scraping images for next profile."
+                     // So parallel to scraping is key. Inside, we can go parallel too.
+                     
+                     await Promise.all(aiTargets.map(async (p) => {
+                         const mediaUrls = p.mediaUrls.slice(0, 5); // Max 5 images
+                         const comments = await ai.generatePostComments(p.caption || '', mediaUrls);
+                         if (comments && comments.length > 0) {
+                             (p as any).suggestedComments = comments; // Attach back to reference object
+                         }
+                     }));
+                }
+                
+                // Mark done only when AI is done
+                progress.updateTaskStatus(profile.handle, 'done', `Found ${profileCandidateCount} candidates`);
+            } catch (err: any) {
+                console.error(`AI gen failed for ${profile.handle}`, err);
+                progress.updateTaskStatus(profile.handle, 'done', `Found ${profileCandidateCount} candidates (AI partial fail)`);
+            }
+        };
+
+        // Fire and forget (track promise)
+        aiPromises.push(aiTask());
 
       } catch (err: any) {
           console.error(`Failed to scrape ${profile.handle}`, err);
           progress.updateTaskStatus(profile.handle, 'failed', err.message);
       }
+    }
+
+    // Wait for all AI tasks to drain before saving
+    if (aiPromises.length > 0) {
+        console.log('Waiting for AI tasks to complete...');
+        await Promise.all(aiPromises);
     }
 
     // Sort and Select
@@ -113,22 +159,24 @@ export async function runCuration() {
 
     // Save to DB
     const dbPosts = finalSelection.map(p => ({
-      run_id: runId,
-      profile_handle: p.handle,
-      post_url: p.url,
+      runId: runId,
+      profileHandle: p.handle,
+      postUrl: p.url,
       shortcode: p.shortcode,
-      posted_at: p.postedAt!,
-      comment_count: p.commentCount,
-      like_count: p.likeCount,
+      postedAt: p.postedAt ? new Date(p.postedAt) : new Date(),
+      commentCount: p.commentCount,
+      likeCount: p.likeCount,
       score: p.score,
-      is_curated: 1,
-      media_type: p.mediaType,
+      isCurated: true,
+      mediaType: p.mediaType as repo.MediaType,
       caption: p.caption,
-      accessibility_caption: p.accessibilityCaption,
-      has_liked: p.hasLiked ? 1 : 0,
+      accessibilityCaption: p.accessibilityCaption,
+      hasLiked: p.hasLiked,
       username: p.username,
-      user_comment: null
-    }));
+      userComment: null,
+      suggestedComments: (p as any).suggestedComments || [],
+      mediaUrls: p.mediaUrls || []
+    } as repo.Post));
     
     progress.updateTaskStatus(TASK_DONE, 'processing');
 

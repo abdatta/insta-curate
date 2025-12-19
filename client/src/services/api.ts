@@ -83,5 +83,14 @@ export const api = {
       body: JSON.stringify({ comment }),
     });
     if (!res.ok) throw new Error('Failed to save comment');
+  },
+
+  async generateComments(shortcode: string): Promise<string[]> {
+      const res = await fetch(`/api/posts/${shortcode}/generate-comments`, {
+          method: 'POST'
+      });
+      if (!res.ok) throw new Error('Failed to generate comments');
+      const data = await res.json();
+      return data.comments;
   }
 };

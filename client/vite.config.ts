@@ -47,6 +47,9 @@ export default defineConfig({
     })
   ],
   server: {
+    allowedHosts: [
+      "icurate.abdatta.com"
+    ],
     fs: {
       allow: ['..']
     },

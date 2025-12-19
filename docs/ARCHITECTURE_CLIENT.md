@@ -25,7 +25,7 @@ Theming is handled entirely via CSS Variables in `src/styles/tokens.css`.
 
 ## Key Patterns
 
-- **API Service**: All fetch calls are centralized in `services/api.ts` and return typed promises.
+- **API Service**: All fetch calls are centralized in `services/api.ts` and return typed promises. Uses **Shared Types** (`shared/types.ts`) for contract safety.
 - **Hooks**: Complex state logic (fetching, loading states) is extracted into hooks like `useCuratedPosts`.
 - **Components**: Functional components using Preact hooks. Keep logic minimal; delegate to hooks or utils.
 

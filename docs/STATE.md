@@ -1,18 +1,21 @@
 # State of the World
 
-> Last Updated: 2025-12-18
+> Last Updated: 2025-12-19
 
 ## Capabilities (What Works)
 
 - **Login**: Auth state persists via `data/storageState.json`. Manual login flow exists if cookie expires.
-- **Scraping**: Robust **Network Interception** captures full post metadata (Likes, Comments, Caption, Media Type).
+- **Scraping**: Robust **Network Interception** captures full post metadata.
+    - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
+    - **High-Res Extraction**: Prioritizes `image_versions2` candidates for best quality.
 - **Curation Algorithm**:
     - Favorites high comments.
     - Penalizes posts older than 24h.
     - Limits: Max 5 posts per profile, Max 30 posts per run.
 - **Commenting (Admin UI)**:
-    - AI-generated suggestion placeholders with "Use" and "Post" flow.
-    - Manual comment editing and local persistence.
+    - **AI Suggestions**: Live, on-demand generation using **OpenAI (gpt-5-nano)** with Structured Outputs.
+    - **Async Workflow**: Generation happens in parallel with scraping or on-demand via UI.
+    - **UI**: Regenerate button, row-based layout for easy reading.
 - **History View**:
     - Full curation history grouped by runs with dividers.
     - Intelligent relative timestamps (Relative for <1 week, absolute thereafter).
@@ -22,10 +25,9 @@
     - **Offline Capable**: Service Worker caching.
     - **Status badges** (New/Late/Old) and auto-collapse for processed posts.
     - **Granular Profile Management**: Add, delete, and toggle individual profiles.
-    - **Shared Constants**: Unified constants between Client and Server via `shared/`.
-- **Run Improvements**:
-    - **Divider**: Visual separation between current and previous runs.
-    - **Status**: Relative timestamps in UI.
+    - **Architecture**:
+        - **Shared Types**: Single source of truth (`shared/types.ts`) for Client/Server API contracts.
+        - **Type Safety**: Full camelCase mapping and strict Type handling across DB and UI.
 
 ## Known Limitations / Risks
 
@@ -42,4 +44,4 @@
 ## Tech Debt / Code Health
 
 - **`scrapeProfile.ts`**: The PostData type definition is manual. Should ideally be generated from a schema, but IG's schema is private/undocumented.
-- **Frontend Refactor**: Complete. Moved from vanilla `app.js` to modular Preact components + CSS Modules. CSS refactoring finished (no inline styles).
+- **Testing**: Added initial backend tests, but frontend interactions (especially `PostCard` logic) need more coverage.

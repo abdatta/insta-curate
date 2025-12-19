@@ -97,13 +97,16 @@ export const failStuckRuns = () => {
     }
 }
 
-// Posts
-export type InputPost = {
+import { MediaType } from '../../shared/types';
+export { MediaType };
+
+// Raw Database Row
+export type DbPost = {
   run_id: number;
   profile_handle: string;
   post_url: string;
   shortcode: string;
-  posted_at: string;
+  posted_at: number | string; // Timestamp or ISO string (legacy)
   comment_count: number;
   like_count?: number | null;
   score: number;
@@ -114,12 +117,80 @@ export type InputPost = {
   has_liked?: number;
   username?: string | null;
   user_comment?: string | null;
+  suggested_comments?: string | null; // JSON string
+  media_urls?: string | null; // JSON string
 };
 
-export const savePosts = (posts: InputPost[]) => {
+// Domain Object (extends shared definition logic but with distinct Date type)
+export type Post = {
+  runId: number;
+  profileHandle: string;
+  postUrl: string;
+  shortcode: string;
+  postedAt: Date; // Differs from Shared (string)
+  commentCount: number;
+  likeCount?: number | null;
+  score: number;
+  isCurated: boolean;
+  mediaType: MediaType;
+  caption?: string | null;
+  accessibilityCaption?: string | null;
+  hasLiked: boolean;
+  username?: string | null;
+  userComment?: string | null;
+  suggestedComments?: string[];
+  mediaUrls?: string[];
+  // Extra fields from joins
+  runDate?: string; 
+  runStatus?: string;
+};
+
+const toDb = (p: Post): DbPost => ({
+  run_id: p.runId,
+  profile_handle: p.profileHandle,
+  post_url: p.postUrl,
+  shortcode: p.shortcode,
+  posted_at: p.postedAt.getTime(), // Store as timestamp
+  comment_count: p.commentCount,
+  like_count: p.likeCount,
+  score: p.score,
+  is_curated: p.isCurated ? 1 : 0,
+  media_type: p.mediaType,
+  caption: p.caption,
+  accessibility_caption: p.accessibilityCaption,
+  has_liked: p.hasLiked ? 1 : 0,
+  username: p.username,
+  user_comment: p.userComment,
+  suggested_comments: p.suggestedComments ? JSON.stringify(p.suggestedComments) : null,
+  media_urls: p.mediaUrls ? JSON.stringify(p.mediaUrls) : null
+});
+
+const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post => ({
+  runId: row.run_id,
+  profileHandle: row.profile_handle,
+  postUrl: row.post_url,
+  shortcode: row.shortcode,
+  postedAt: new Date(row.posted_at), // Handles timestamp number or ISO string
+  commentCount: row.comment_count,
+  likeCount: row.like_count,
+  score: row.score,
+  isCurated: !!row.is_curated,
+  mediaType: row.media_type as MediaType,
+  caption: row.caption,
+  accessibilityCaption: row.accessibility_caption,
+  hasLiked: !!row.has_liked,
+  username: row.username,
+  userComment: row.user_comment,
+  suggestedComments: row.suggested_comments ? JSON.parse(row.suggested_comments) : [],
+  mediaUrls: row.media_urls ? JSON.parse(row.media_urls) : [],
+  runDate: row.run_date,
+  runStatus: row.run_status
+});
+
+export const savePosts = (posts: Post[]) => {
   const insert = db.prepare(`
-    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment)
-    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment)
+    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment, media_urls, suggested_comments)
+    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment, @media_urls, @suggested_comments)
     ON CONFLICT(shortcode) DO UPDATE SET
       run_id = excluded.run_id,
       comment_count = excluded.comment_count,
@@ -129,10 +200,12 @@ export const savePosts = (posts: InputPost[]) => {
       caption = excluded.caption,
       accessibility_caption = excluded.accessibility_caption,
       has_liked = excluded.has_liked,
-      username = excluded.username
+      username = excluded.username,
+      media_urls = excluded.media_urls,
+      suggested_comments = excluded.suggested_comments
   `);
-  const insertMany = db.transaction((posts: InputPost[]) => {
-    for (const post of posts) insert.run(post);
+  const insertMany = db.transaction((posts: Post[]) => {
+    for (const post of posts) insert.run(toDb(post));
   });
   insertMany(posts);
 };
@@ -141,18 +214,30 @@ export const updatePostComment = (shortcode: string, comment: string) => {
     db.prepare('UPDATE posts SET user_comment = ? WHERE shortcode = ?').run(comment, shortcode);
 };
 
-export const getCuratedPosts = (runId: number) => {
-  return db.prepare('SELECT * FROM posts WHERE run_id = ? AND is_curated = 1 ORDER BY score DESC').all(runId);
+export const updatePostSuggestions = (shortcode: string, suggestions: string[]) => {
+    db.prepare('UPDATE posts SET suggested_comments = ? WHERE shortcode = ?').run(JSON.stringify(suggestions), shortcode);
 };
 
-export const getAllCuratedPosts = () => {
-    return db.prepare(`
+export const getPostByShortcode = (shortcode: string): Post | undefined => {
+    const row = db.prepare('SELECT * FROM posts WHERE shortcode = ?').get(shortcode) as DbPost | undefined;
+    if (!row) return undefined;
+    return fromDb(row);
+};
+
+export const getCuratedPosts = (runId: number): Post[] => {
+  const rows = db.prepare('SELECT * FROM posts WHERE run_id = ? AND is_curated = 1 ORDER BY score DESC').all(runId) as DbPost[];
+  return rows.map(fromDb);
+};
+
+export const getAllCuratedPosts = (): Post[] => {
+    const rows = db.prepare(`
         SELECT p.*, r.started_at as run_date, r.status as run_status 
         FROM posts p 
         JOIN runs r ON p.run_id = r.id 
         WHERE p.is_curated = 1 
         ORDER BY p.run_id DESC, p.score DESC
-    `).all();
+    `).all() as (DbPost & { run_date: string, run_status: string })[];
+    return rows.map(fromDb);
 };
 
 // Subscriptions

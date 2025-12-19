@@ -10,6 +10,7 @@ export type PostData = {
   accessibilityCaption: string | null;
   username: string | null;
   hasLiked: boolean;
+  mediaUrls: string[];
 };
 
 export async function scrapeProfile(page: Page, handle: string): Promise<PostData[]> {
@@ -54,16 +55,58 @@ export async function scrapeProfile(page: Page, handle: string): Promise<PostDat
                 captionText = node.edge_media_to_caption.edges[0].node.text;
             }
 
+            // Helper to find best image
+            const getBestImage = (candidates: any[]) => {
+                if (!candidates || candidates.length === 0) return null;
+                return candidates.sort((a, b) => (b.width * b.height) - (a.width * a.height))[0].url;
+            };
+
+            // Extract Media URLs
+            const mediaUrls: string[] = [];
+            const mediaType = node.media_type || 1;
+
+            if (mediaType === 1 || mediaType === 2) { 
+                // Image or Video (treat main display_url as thumb for video)
+                const best = getBestImage(node.image_versions2?.candidates);
+                if (best) mediaUrls.push(best);
+                else if (node.display_url) mediaUrls.push(node.display_url);
+            } else if (mediaType === 8) { // Carousel
+                // Try carousel_media first (from xdt response)
+                if (node.carousel_media && Array.isArray(node.carousel_media)) {
+                    for (const item of node.carousel_media) {
+                        if (mediaUrls.length >= 5) break;
+                        const best = getBestImage(item.image_versions2?.candidates);
+                        if (best) mediaUrls.push(best);
+                        else if (item.display_url) mediaUrls.push(item.display_url); // Fallback
+                    }
+                } 
+                // Fallback to edge_sidecar_to_children (if schema differs)
+                else {
+                    const children = node.edge_sidecar_to_children?.edges;
+                    if (Array.isArray(children)) {
+                        for (const child of children) {
+                             if (mediaUrls.length >= 5) break;
+                            if (child.node) {
+                                const best = getBestImage(child.node.image_versions2?.candidates);
+                                if (best) mediaUrls.push(best);
+                                else if (child.node.display_url) mediaUrls.push(child.node.display_url);
+                            }
+                        }
+                    }
+                }
+            }
+
             posts.push({
                 shortcode: node.code || node.shortcode,
                 postedAt: node.taken_at ? new Date(node.taken_at * 1000).toISOString() : null,
                 commentCount: node.comment_count || 0,
                 likeCount: node.like_count || node.edge_liked_by?.count || 0,
-                mediaType: node.media_type || 1,
+                mediaType: mediaType,
                 caption: captionText,
                 accessibilityCaption: node.accessibility_caption || null,
                 username: node.user?.username || null,
-                hasLiked: !!node.has_liked
+                hasLiked: !!node.has_liked,
+                mediaUrls
             });
         }
     } else {

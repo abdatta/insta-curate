@@ -1,19 +1,8 @@
-export interface Post {
-  shortcode: string;
-  caption: string;
-  posted_at: string; // ISO date
-  score: number;
-  comment_count: number;
-  like_count: number;
-  media_type: string;
-  display_url: string; // or similar
-  profile_handle: string;
-  has_liked: boolean;
-  user_comment?: string;
-  run_id?: number;
-  run_date?: string;
-  post_url?: string;
-}
+import type { Post } from '@shared/types';
+
+// Re-export shared types as the source of truth
+export type { Post } from '@shared/types';
+export { MediaType } from '@shared/types';
 
 export interface RunStatus {
   status: 'running' | 'completed' | 'failed' | 'idle';

@@ -11,3 +11,4 @@
 | **Network Interception** | The technique of listening to HTTP responses in the browser (`page.waitForResponse`) rather than parsing HTML. | `scrapeProfile.ts` |
 | **Badge** | UI marker for post freshness: **New** (<24h, Blue), **Late** (24-48h, Orange), **Old** (>48h, Grey). | `client/src/components/PostCard.tsx` |
 | **User Comment** | A local draft or approved comment stored in our DB before actually being posted to IG. | `posts.user_comment` |
+| **Structured Output** | OpenAI feature ensuring JSON responses strictly follow a defined Schema. | `src/services/ai.ts` |

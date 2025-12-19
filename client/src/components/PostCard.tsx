@@ -11,7 +11,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
-  const postedTime = new Date(post.posted_at).getTime();
+  const postedTime = new Date(post.postedAt).getTime();
   const now = new Date().getTime();
   const ageHours = (now - postedTime) / (1000 * 60 * 60);
 
@@ -23,13 +23,15 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
   else if (ageHours < 48) { badgeClass = 'badge-late'; badgeText = 'Late'; }
   else { badgeClass = 'badge-old'; badgeText = 'Old'; isOld = true; }
 
-  const hasLiked = !!post.has_liked;
-  const hasCommented = !!post.user_comment;
+  const hasLiked = !!post.hasLiked;
+  const hasCommented = !!post.userComment;
   
   // Collapsed state
   const [collapsed, setCollapsed] = useState(isOld || hasLiked || hasCommented);
   const [commentText, setCommentText] = useState('');
   const [posting, setPosting] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>(post.suggestedComments || []);
 
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
@@ -53,12 +55,12 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
         <div class="header-left">
           <span class={`badge ${badgeClass}`}>{badgeText}</span>
           {hasLiked && <span class="badge badge-liked">Liked</span>}
-          <span class="post-handle">@{post.profile_handle}</span>
+          <span class="post-handle">@{post.profileHandle}</span>
         </div>
         <div class="header-right">
           <span class="post-meta">
             {timeAgo(postedTime)} 
-            {post.run_date && ` • ${timeAgo(post.run_date)}`}
+            {post.runDate && ` • ${timeAgo(new Date(post.runDate).getTime())}`}
           </span>
         </div>
       </div>
@@ -83,17 +85,35 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
             {hasCommented ? (
               <div class="saved-comment">
                 <strong>Your Comment:</strong>
-                {post.user_comment}
+                {post.userComment}
               </div>
             ) : (
              !hasLiked && !isOld && (
                 <div>
                    <div class="suggestion-area">
-                     <div class="suggestion-label">Add a comment:</div>
+                     <div class="suggestion-label">Suggested comments:</div>
                      <div class="suggestion-buttons">
-                       {["Great shot! 📸", "Amazing! 🙌", "Love this! 🔥"].map(s => (
-                         <button key={s} class="btn-use" onClick={() => setCommentText(s)}>{s}</button>
+                       {suggestions.map((s, i) => (
+                         <button key={i} class="btn-use" onClick={() => setCommentText(s)}>{s}</button>
                        ))}
+                       <button 
+                         class="btn-generate" 
+                         disabled={generating}
+                         onClick={async () => {
+                             setGenerating(true);
+                             try {
+                                 const comments = await api.generateComments(post.shortcode);
+                                 setSuggestions(comments);
+                             } catch (e) {
+                                 console.error(e);
+                                 alert('Failed to generate suggestions');
+                             } finally {
+                                 setGenerating(false);
+                             }
+                         }} 
+                       >
+                        {generating ? 'Generating...' : (suggestions.length > 0 ? '↻ Regenerate Suggestions' : 'Generate Suggestions')}
+                       </button>
                      </div>
                    </div>
                    <div class="comment-input-row">
@@ -116,11 +136,11 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
           <div class="post-stats">
             <span>Rank #{rank}</span>
             <span>Score: {post.score.toFixed(2)}</span>
-            <span>Comments: {post.comment_count}</span>
-            <span>Likes: {post.like_count}</span>
+            <span>Comments: {post.commentCount}</span>
+            <span>Likes: {post.likeCount}</span>
           </div>
           
-          <a href={post.post_url || `https://www.instagram.com/p/${post.shortcode}`} target="_blank" class="post-link">Open in Instagram</a>
+          <a href={post.postUrl || `https://www.instagram.com/p/${post.shortcode}`} target="_blank" class="post-link">Open in Instagram</a>
         </div>
       </div>
     </article>
