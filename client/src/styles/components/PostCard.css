@@ -1,0 +1,162 @@
+.post-card {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-8);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.post-card:not(.collapsed):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.post-card.collapsed {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-2);
+    background: var(--color-bg);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin: calc(-1 * var(--space-3)) 0;
+    padding: 0.5rem 0; /* Add touch target area */
+    user-select: none;
+    cursor: pointer;
+}
+
+.post-card:not(.collapsed) .post-header {
+    margin-bottom: 0;
+}
+
+.header-left {
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.post-meta {
+    color: var(--color-text-secondary);
+}
+
+.badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.badge-new { background: #E0F2FE; color: #0284C7; }
+.badge-late { background: #FFEDD5; color: #EA580C; }
+.badge-old { background: #F3F4F6; color: #4B5563; }
+.badge-liked { background: #FCE7F3; color: #DB2777; }
+
+/* collapsible-wrapper controlled by classes below */
+
+.collapsible-hidden {
+    display: none;
+}
+
+.collapsible-visible {
+    display: block;
+}
+
+.post-embed {
+    margin: 0 -1rem 1rem -1rem; 
+    border-top: 1px solid var(--color-border); 
+    border-bottom: 1px solid var(--color-border); 
+    background: #fbfbfb; 
+    min-height: 400px;
+}
+
+.instagram-iframe {
+    width: 100%; 
+    height: 600px; 
+    border: none;
+}
+
+.suggestion-area {
+    margin-top: 1rem; 
+    padding-top: 1rem; 
+    border-top: 1px solid var(--color-border);
+}
+
+.suggestion-label {
+    font-size: 0.85rem; 
+    color: var(--color-text-secondary); 
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-buttons {
+    display: flex; 
+    gap: 0.5rem; 
+    margin-bottom: 0.5rem;
+}
+
+.btn-use { 
+    font-size: 0.8rem; 
+    padding: 0.3rem 0.6rem; 
+    background: #efefef; 
+    border: none; 
+    border-radius: 4px; 
+    margin-right: 0.5rem; 
+}
+
+.comment-input-row { 
+    display: flex; 
+    gap: 0.5rem; 
+    margin-top: 0.5rem; 
+}
+
+.comment-input { 
+    flex: 1; 
+    padding: 0.6rem; 
+    border: 1px solid var(--color-border); 
+    border-radius: 4px; 
+}
+
+.btn-post { 
+    background: var(--color-primary); 
+    color: white; 
+    border: none; 
+    padding: 0.6rem 1rem; 
+    border-radius: 4px; 
+    font-weight: 600; 
+}
+
+.btn-post:disabled { 
+    opacity: 0.7; 
+}
+
+.saved-comment { 
+    background: #f0f9ff; 
+    border: 1px solid #bae6fd; 
+    padding: 1rem; 
+    border-radius: 6px; 
+    color: #0c4a6e; 
+}
+
+.post-stats { 
+    margin-top: 1rem; 
+    padding-top: 1rem; 
+    border-top: 1px solid #f0f0f0; 
+    font-size: 0.85rem; 
+    color: #666; 
+    display: flex; 
+    justify-content: space-between; 
+}
+
+.post-link {
+    /* Add any link styles if needed, or rely on global */
+    display: inline-block;
+    margin-top: 1rem;
+}

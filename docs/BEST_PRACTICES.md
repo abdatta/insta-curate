@@ -40,6 +40,12 @@ Documentation is not "fire and forget". It must be kept in sync with code.
 - **Type Safety**:
     - Avoid `any`.
     - Define types for API responses (like `PostData`) explicitly.
+- **Frontend / PWA**:
+    - **Styling**: 
+        - Use external CSS files (`client/src/styles/components/`). **No** inline styles.
+        - Use **Tokens** (`var(--color-primary)`, `var(--space-4)`) for consistency. Avoid hardcoded hex/px values.
+    - **Components**: Keep components small. Place shared logic in `hooks/`.
+
 
 ## 4. Agent Etiquette
 

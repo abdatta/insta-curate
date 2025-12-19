@@ -9,5 +9,5 @@
 | **Shortcode** | Instagram's unique ID for a post (e.g., `DSYKS_HEfC-`). Used in URLs. | `posts.shortcode` |
 | **VAPID** | Voluntary Application Server Identification. The protocol used for web push authentication. | `src/push/` |
 | **Network Interception** | The technique of listening to HTTP responses in the browser (`page.waitForResponse`) rather than parsing HTML. | `scrapeProfile.ts` |
-| **Badge** | UI marker for post freshness: **New** (<24h, Blue), **Late** (24-48h, Orange), **Old** (>48h, Grey). | `public/app.js` |
+| **Badge** | UI marker for post freshness: **New** (<24h, Blue), **Late** (24-48h, Orange), **Old** (>48h, Grey). | `client/src/components/PostCard.tsx` |
 | **User Comment** | A local draft or approved comment stored in our DB before actually being posted to IG. | `posts.user_comment` |

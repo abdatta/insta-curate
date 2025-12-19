@@ -16,9 +16,14 @@
 - **History View**:
     - Full curation history grouped by runs with dividers.
     - Intelligent relative timestamps (Relative for <1 week, absolute thereafter).
+    - **Frontend**: Vite + Preact + TypeScript PWA.
+    - **Progress UI**: Real-time visualization of curation tasks.
+    - **Run Control**: Manual trigger via UI.
+    - **Offline Capable**: Service Worker caching.
     - Status badges (New/Late/Old) and auto-collapse for processed posts.
-- **Notifications**: VAPID Push notifications work on Desktop/Android (iOS requires PWA install).
-- **Resilience**: Server auto-cleans "stuck" runs on restart.
+- **Run Improvements**:
+    - **Divider**: Visual separation between current and previous runs.
+    - **Status**: Relative timestamps in UI.
 
 ## Known Limitations / Risks
 
@@ -35,4 +40,4 @@
 ## Tech Debt / Code Health
 
 - **`scrapeProfile.ts`**: The PostData type definition is manual. Should ideally be generated from a schema, but IG's schema is private/undocumented.
-- **Frontend**: `app.js` is a single large file (~200 lines). Might need splitting if it grows.
+- **Frontend Refactor**: Complete. Moved from vanilla `app.js` to modular Preact components + CSS Modules. CSS refactoring finished (no inline styles).

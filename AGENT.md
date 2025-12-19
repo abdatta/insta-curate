@@ -21,7 +21,7 @@
     - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
 - **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
 - **Notifications**: Web Push (VAPID) enabled.
-- **Frontend**: Vanilla JS PWA. Lists curated posts, allows manual triggering of runs, and supports comment approval workflow.
+- **Frontend**: Vite + Preact + TypeScript PWA. Lists curated posts, allows manual triggering of runs (with progress UI), and supports comment approval workflow.
 
 **Known Issues**:
 - Instagram might prompt for login or challenge occasionally (handled via `auth.ts` manual login flow).
@@ -41,14 +41,14 @@ npm run build
 ```
 
 **Key Commands**:
-- `npm run dev`: Starts the TypeScript watcher and Express server.
+- `npm run dev`: Starts the Backend (Express) and Frontend (Vite) concurrently.
 - `npx playwright test`: (If tests are added later).
 
 ## 4. Agent Rules of Engagement
 
 1.  **Do NOT refactor to DOM scraping**: We explicitly moved TO network interception. Do not revert this without strong evidence.
 2.  **Schema Changes**: Always use `db/migrations.ts`. Check `try...catch` blocks for column additions to support existing DBs.
-3.  **Dependency Discipline**: Do not add large framework dependencies (React, specialized UI libs) for the PWA. Keep it Vanilla/Lightweight.
+3.  **Dependency Discipline**: Do not add large framework dependencies (e.g. Next.js, full React) unnecessarily. We use **Preact** for the PWA to balance component architecture with lightweight footprint.
 4.  **Artifacts**: Update `docs/STATE.md` if you add a major feature.
 
 ## 5. Navigation

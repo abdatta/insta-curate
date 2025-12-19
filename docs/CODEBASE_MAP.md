@@ -10,14 +10,15 @@
 | **`main.ts`** | **Entry Point**. Init DB, Scheduler, Server. | |
 | **`routes.ts`** | API Endpoints definition. | |
 
-## `public/` (Frontend)
+## `client/` (Frontend - Vite + Preact)
 
-| File | Responsibility |
+| Directory/File | Responsibility |
 | :--- | :--- |
-| **`app.js`** | Single-page logic. Routing, API calls, DOM rendering. |
-| **`sw.js`** | Service Worker. Handles Push events and offline caching. |
-| **`styles.css`** | Global styles (Variables, Dark mode logic). |
-| **`index.html`** | The shell. |
+| **`src/app.tsx`** | Main entry component & routing logic. |
+| **`src/components/`** | UI components (`PostCard`, `Settings`). |
+| **`src/styles/`** | CSS Modules (component-scoped) and Tokens. |
+| **`src/services/`** | API abstractions (`api.ts`). |
+| **`vite.config.ts`** | Build configuration. |
 
 ## `data/` (State)
 

@@ -11,7 +11,7 @@ A minimal Node.js + TypeScript PWA that curates Instagram posts from your feed b
 - **PWA UI**: Mobile-friendly, installable on Android/iOS (Add to Home Screen).
 - **Push Notifications**: Get notified when curation completes.
 - **Schedule**: configurable run interval (default 12h).
-- **Admin Settings**: Manage profile list and schedule.
+- **Admin Settings**: Manage profile list, schedule, and view detailed run progress.
 
 ## Setup
 
@@ -40,7 +40,7 @@ A minimal Node.js + TypeScript PWA that curates Instagram posts from your feed b
 1. Open `http://localhost:3000` in your browser.
 2. Go to **Settings** tab.
 3. Add Instagram handles to monitor (one per line).
-4. Click **Run Curation Now** to test immediately.
+4. Click **Run Curation Now** to test immediately and watch the progress tasks.
 5. Enable Notifications to get status updates.
 
 ## PWA & Notifications (Localhost)
