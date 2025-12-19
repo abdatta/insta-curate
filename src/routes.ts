@@ -82,6 +82,12 @@ router.get('/admin/status', (req, res) => {
   });
 });
 
+// GET /api/admin/progress
+router.get('/admin/progress', async (req, res) => {
+    const { getProgress } = await import('./curator/progress');
+    res.json(getProgress());
+});
+
 // GET /api/admin/settings
 router.get('/admin/settings', (req, res) => {
   res.json({

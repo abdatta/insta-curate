@@ -18,6 +18,13 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 // Routes
 app.use('/api', routes);
 
+import { TASK_INITIALIZING, TASK_DONE } from './constants';
+app.get('/constants.js', (_req, res) => {
+  res.type('application/javascript');
+  res.send(`const TASK_INITIALIZING = "${TASK_INITIALIZING}";
+const TASK_DONE = "${TASK_DONE}";`);
+});
+
 // Init
 async function start() {
   try {

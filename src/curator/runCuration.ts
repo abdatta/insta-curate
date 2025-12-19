@@ -1,4 +1,5 @@
 import { getContext } from './auth';
+import { TASK_INITIALIZING, TASK_DONE } from '../constants';
 import { scrapeProfile, PostData } from './scrapeProfile';
 import * as repo from '../db/repo';
 import { sendPushNotification } from '../push/send';
@@ -33,36 +34,63 @@ export async function runCuration() {
   const runId = repo.createRun();
   console.log(`Starting run ${runId}`);
 
+  // INIT PROGRESS
+  const allProfiles = repo.getProfiles();
+  const enabledProfiles = allProfiles.filter(p => p.is_enabled);
+  
+  // We want to show even disabled ones? Or just enabled? 
+  // Let's just track enabled ones for now to be less confusing.
+  const taskHandles = [TASK_INITIALIZING, ...enabledProfiles.map(x => x.handle), TASK_DONE];
+  import('./progress').then(p => p.initProgress(taskHandles));
+
   let browser;
   try {
     const { context, browser: b } = await getContext();
     browser = b;
     const page = await context.newPage();
 
-    const profiles = repo.getProfiles().filter(p => p.is_enabled);
-    console.log(`Curating for ${profiles.length} profiles`);
+    console.log(`Curating for ${enabledProfiles.length} profiles`);
+    const progress = await import('./progress');
+    
+    // Mark Initializing done
+    progress.updateTaskStatus(TASK_INITIALIZING, 'done');
 
     let allCandidates: (PostData & { url: string; handle: string; score: number })[] = [];
 
-    for (const profile of profiles) {
-      const posts = await scrapeProfile(page, profile.handle);
+    for (const profile of enabledProfiles) {
+      // START TASK
+      progress.updateTaskStatus(profile.handle, 'processing');
+      // progress.currentProfileIndex++ is implicit by iteration or we can track it manually if we wanted exact index
       
-      // Jitter delay
-      await page.waitForTimeout(1000 + Math.random() * 2000);
+      try {
+        const posts = await scrapeProfile(page, profile.handle);
+        
+        // Jitter delay
+        await page.waitForTimeout(1000 + Math.random() * 2000);
 
-      // Process posts directly
-      for (const post of posts) {
-        if (post.postedAt) {
-          const score = calculateScore(post);
-          if (score > 0) {
-            allCandidates.push({
-              ...post,
-              url: `https://www.instagram.com/p/${post.shortcode}/`,
-              handle: profile.handle,
-              score
-            });
-          }
+        let profileCandidateCount = 0;
+
+        // Process posts directly
+        for (const post of posts) {
+            if (post.postedAt) {
+            const score = calculateScore(post);
+            if (score > 0) {
+                allCandidates.push({
+                ...post,
+                url: `https://www.instagram.com/p/${post.shortcode}/`,
+                handle: profile.handle,
+                score
+                });
+                profileCandidateCount++;
+            }
+            }
         }
+        
+        progress.updateTaskStatus(profile.handle, 'done', `Found ${profileCandidateCount} candidates`);
+
+      } catch (err: any) {
+          console.error(`Failed to scrape ${profile.handle}`, err);
+          progress.updateTaskStatus(profile.handle, 'failed', err.message);
       }
     }
 
@@ -102,12 +130,17 @@ export async function runCuration() {
       user_comment: null
     }));
     
-    // Also save candidates that were not selected? Maybe just selected ones for now to keep DB small.
-    // The prompt says "Store results". We'll store selected.
+    progress.updateTaskStatus(TASK_DONE, 'processing');
+
     repo.savePosts(dbPosts);
     repo.completeRun(runId, 'success', `Curated ${finalSelection.length} posts`);
 
     console.log(`Run ${runId} complete. ${finalSelection.length} posts curated.`);
+
+    // UPDATE PROGRESS FINAL
+    progress.incrementCuratedCount(finalSelection.length);
+    progress.updateTaskStatus(TASK_DONE, 'done');
+    progress.completeProgress();
     
     // Notify
     try {
@@ -124,6 +157,8 @@ export async function runCuration() {
     console.error('Curation failed:', err);
     repo.completeRun(runId, 'failed', err.message);
     
+    import('./progress').then(p => p.completeProgress(err.message));
+
     try {
         await sendPushNotification({
             title: 'Curation Failed',
