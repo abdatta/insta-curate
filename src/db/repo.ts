@@ -206,8 +206,7 @@ export const savePosts = (posts: Post[]) => {
       has_liked = excluded.has_liked,
       username = excluded.username,
       media_urls = excluded.media_urls,
-      suggested_comments = excluded.suggested_comments,
-      seen = excluded.seen
+      suggested_comments = excluded.suggested_comments
   `);
   const insertMany = db.transaction((posts: Post[]) => {
     for (const post of posts) insert.run(toDb(post));
