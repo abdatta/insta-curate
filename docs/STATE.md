@@ -1,6 +1,6 @@
 # State of the World
 
-> Last Updated: 2025-12-19
+> Last Updated: 2025-12-27
 
 ## Capabilities (What Works)
 
@@ -17,6 +17,7 @@
     - **Error Handling**: Captures screenshots of failures to `data/screenshots` and alerts the UI.
     - **AI Engine**: Enhanced `gpt-5-nano` prompt that treats Media + Caption + Profile Handle as a single context. Explicitly detects memes for witty reactions vs aesthetic observations for regular posts.
 - **Admin UI**:
+    - **Branding**: Custom "InstaCurate" horizontal logo and matching PWA favicon (Rounded/Transparent).
     - **Comment Flow**: Supports AI suggestion review with **Context Input**, manual editing, and automated posting. Features a spinner overlay and "premium" saved state.
     - **Smart Scoring**: Displays AI-generated **Commentability Score (0-10)** based on persona fit.
     - **Refined AI**: Prompt structured for a specific 30yo femme persona, avoiding generic phrases.

@@ -7,6 +7,7 @@ import { timeAgo } from './utils/formatting';
 import './styles/tokens.css';
 import './styles/global.css';
 import './styles/components/App.css';
+import './styles/components/HeaderLogo.css';
 
 export function App() {
   const { data, loading, error, refresh } = useCuratedPosts();
@@ -32,7 +33,8 @@ export function App() {
   return (
     <div id="app">
       <header>
-        <h1>InstaCurate</h1>
+        {/* <h1>InstaCurate</h1> */}
+        <img src="/assets/logo_horizontal.png" alt="InstaCurate" class="app-logo" />
              <div id="notifications-control">
              {/* Push logic skipped for brevity */}
         </div>

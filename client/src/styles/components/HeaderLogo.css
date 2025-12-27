@@ -1,0 +1,14 @@
+
+.app-logo {
+  height: 40px; /* Adjust based on header size */
+  width: auto;
+  display: block;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  /* Ensure header background handles transparent logo well */
+}

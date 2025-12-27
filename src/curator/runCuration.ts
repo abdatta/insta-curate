@@ -101,8 +101,8 @@ export async function runCuration() {
                 const aiTargets = profileCandidates.filter(p => 
                     !p.hasLiked && 
                     (p.mediaType === 1 || p.mediaType === 8) &&
-                    !(p as any).seen &&
-                    (!(p as any).suggestedComments || (p as any).suggestedComments.length === 0)
+                    !p.seen &&
+                    (!p.suggestedComments || p.suggestedComments.length === 0)
                 );
 
                 if (aiTargets.length > 0) {
@@ -114,9 +114,10 @@ export async function runCuration() {
                      
                      await Promise.all(aiTargets.map(async (p) => {
                          const mediaUrls = p.mediaUrls.slice(0, 5); // Max 5 images
-                         const comments = await ai.generatePostComments(p.handle, p.caption || '', mediaUrls);
-                         if (comments && comments.length > 0) {
-                             (p as any).suggestedComments = comments; // Attach back to reference object
+                         const aiRes = await ai.generatePostComments(p.handle, p.caption || '', mediaUrls);
+                         if (aiRes && aiRes.comments.length > 0) {
+                             p.suggestedComments = aiRes.comments;
+                             p.aiScore = aiRes.score;
                          }
                      }));
                 }
@@ -178,9 +179,9 @@ export async function runCuration() {
       hasLiked: p.hasLiked,
       username: p.username,
       userComment: null,
-      suggestedComments: (p as any).suggestedComments || [],
+      suggestedComments: p.suggestedComments || [],
       mediaUrls: p.mediaUrls || [],
-      seen: (p as any).seen || false
+      seen: p.seen || false
     } as repo.Post));
     
     progress.updateTaskStatus(TASK_DONE, 'processing');

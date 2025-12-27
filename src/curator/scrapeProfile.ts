@@ -11,6 +11,10 @@ export type PostData = {
   username: string;
   hasLiked: boolean;
   mediaUrls: string[];
+  // Curation Extensions
+  seen?: boolean;
+  suggestedComments?: string[];
+  aiScore?: number;
 };
 
 export async function scrapeProfile(page: Page, handle: string): Promise<PostData[]> {
