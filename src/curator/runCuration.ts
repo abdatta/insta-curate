@@ -186,21 +186,30 @@ export async function runCuration() {
     
     progress.updateTaskStatus(TASK_DONE, 'processing');
 
+    // Calculate new posts for notification
+    let newPostCount = 0;
+    for (const p of dbPosts) {
+        const existing = repo.getPostByShortcode(p.shortcode);
+        if (!existing || !existing.isCurated) {
+            newPostCount++;
+        }
+    }
+
     repo.savePosts(dbPosts);
     repo.completeRun(runId, 'success', `Curated ${finalSelection.length} posts`);
 
-    console.log(`Run ${runId} complete. ${finalSelection.length} posts curated.`);
+    console.log(`Run ${runId} complete. ${finalSelection.length} posts curated. (${newPostCount} new)`);
 
     // UPDATE PROGRESS FINAL
     progress.incrementCuratedCount(finalSelection.length);
     progress.updateTaskStatus(TASK_DONE, 'done');
     progress.completeProgress();
     
-    // Notify
+    // Notify always
     try {
         await sendPushNotification({
             title: 'Curation finished',
-            body: `Success: ${finalSelection.length} curated posts`,
+            body: `Success: ${finalSelection.length} curated posts (${newPostCount} new)`,
             url: '/'
         });
     } catch (e) {

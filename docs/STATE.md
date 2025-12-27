@@ -31,6 +31,10 @@
     - **Progress UI**: Real-time visualization of curation tasks.
     - **Run Control**: Manual trigger via UI.
     - **Offline Capable**: Service Worker caching with smart **Auto-Updates** (reloads on new build unless busy).
+    - **Notifications**:
+        - **Always-On**: Sends push notifications on every successful run.
+        - **Smart Content**: Message includes count of *new* posts vs total curated.
+        - **Permission UI**: Client-side **Bell Toggle** in header for easy opt-in/out.
     - **Status badges** (New/Late/Old/Seen) and auto-collapse for processed posts.
     - **Granular Profile Management**: Add, delete, and toggle individual profiles.
     - **Architecture**:

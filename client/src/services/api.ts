@@ -111,5 +111,21 @@ export const api = {
           body: JSON.stringify({ seen })
       });
       if (!res.ok) throw new Error('Failed to update seen status');
+  },
+
+  async getVapidKey(): Promise<string> {
+      const res = await fetch('/api/push/vapidPublicKey');
+      if (!res.ok) throw new Error('Failed to fetch VAPID key');
+      const data = await res.json();
+      return data.publicKey;
+  },
+
+  async subscribe(subscription: PushSubscriptionJSON): Promise<void> {
+      const res = await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(subscription)
+      });
+      if (!res.ok) throw new Error('Failed to save subscription');
   }
 };

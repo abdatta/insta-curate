@@ -1,0 +1,26 @@
+.notif-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-toggle:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+}
+
+.notif-toggle.active {
+    color: var(--color-primary);
+}
+
+.notif-toggle.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

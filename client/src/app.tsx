@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import { PostCard } from './components/PostCard';
 import { Settings } from './components/Settings';
+import { NotificationToggle } from './components/NotificationToggle';
 import { useCuratedPosts } from './hooks/usePosts';
 import { api } from './services/api';
 import { timeAgo } from './utils/formatting';
@@ -36,7 +37,7 @@ export function App() {
         {/* <h1>InstaCurate</h1> */}
         <img src="/assets/logo_horizontal.png" alt="InstaCurate" class="app-logo" />
              <div id="notifications-control">
-             {/* Push logic skipped for brevity */}
+             <NotificationToggle />
         </div>
       </header>
 
