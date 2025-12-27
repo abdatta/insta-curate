@@ -35,9 +35,11 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
   // Collapsed state: collapsed if old, liked, commented, OR SEEN
   const [collapsed, setCollapsed] = useState(isOld || hasLiked || hasCommented || isSeen);
   const [commentText, setCommentText] = useState('');
+  const [context, setContext] = useState('');
   const [posting, setPosting] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>(post.suggestedComments || []);
+  const [aiScore, setAiScore] = useState<number>(post.aiScore || 0);
 
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
@@ -86,6 +88,21 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
           <span class={`badge ${badgeClass}`}>{badgeText}</span>
           {hasLiked && <span class="badge badge-liked">Liked</span>}
           {/* Seen badge removed per request, purely relying on opacity style */}
+          
+          {aiScore > 0 && (
+             <span class={`badge ${
+                 aiScore === 10 ? 'badge-score-10' : 
+                 aiScore >= 8 ? 'badge-score-high' : 
+                 aiScore >= 5 ? 'badge-score-med' : 'badge-score-low'
+             }`}>
+                 {aiScore === 10 ? (
+                    <><span>★</span> 10</>
+                 ) : (
+                    `${aiScore}/10`
+                 )}
+             </span>
+          )}
+
           <span class="post-handle">@{post.profileHandle}</span>
         </div>
         <div class="header-right">
@@ -129,6 +146,13 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
                    )}
                    <div class="suggestion-area">
                      <div class="suggestion-label">Suggested comments:</div>
+                     <input 
+                        type="text" 
+                        class="context-input" 
+                        placeholder="Add context for AI (optional)..."
+                        value={context}
+                        onInput={(e) => setContext(e.currentTarget.value)}
+                     />
                      <div class="suggestion-buttons">
                        {suggestions.map((s, i) => (
                          <button key={i} class="btn-use" onClick={() => setCommentText(s)}>{s}</button>
@@ -140,8 +164,10 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
                              setGenerating(true);
                              window.instaCurateBusy = true;
                              try {
-                                 const comments = await api.generateComments(post.shortcode);
-                                 setSuggestions(comments);
+                                 const result = await api.generateComments(post.shortcode, context);
+                                 setSuggestions(result.comments);
+                                 setAiScore(result.score);
+                                 // Clear context after use? No, keep it so user can tweak.
                              } catch (e) {
                                  console.error(e);
                                  alert('Failed to generate suggestions');

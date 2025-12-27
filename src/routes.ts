@@ -81,9 +81,10 @@ router.patch('/posts/:shortcode/seen', (req, res) => {
 // POST /api/posts/:shortcode/generate-comments
 router.post('/posts/:shortcode/generate-comments', async (req, res) => {
     const { shortcode } = req.params;
+    const { context } = req.body;
     
     // Import here to avoid circular dependencies if any, or just lazily load service
-    const { getPostByShortcode, updatePostSuggestions } = await import('./db/repo');
+    const { getPostByShortcode, updatePostSuggestionsAndScore } = await import('./db/repo');
     const { OpenAIService } = await import('./services/ai');
     
     try {
@@ -96,11 +97,11 @@ router.post('/posts/:shortcode/generate-comments', async (req, res) => {
         const mediaUrls = post.mediaUrls || [];
         
         const ai = new OpenAIService();
-        const suggestions = await ai.generatePostComments(post.profileHandle, post.caption || '', mediaUrls.slice(0, 10));
+        const result = await ai.generatePostComments(post.profileHandle, post.caption || '', mediaUrls.slice(0, 10), context);
         
-        if (suggestions && suggestions.length > 0) {
-            updatePostSuggestions(shortcode, suggestions); // Repo now handles serialization
-            res.json({ success: true, comments: suggestions });
+        if (result && result.comments.length > 0) {
+            updatePostSuggestionsAndScore(shortcode, result.comments, result.score); 
+            res.json({ success: true, comments: result.comments, score: result.score });
         } else {
             res.status(500).json({ error: 'Failed to generate comments' });
         }

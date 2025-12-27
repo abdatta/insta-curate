@@ -120,6 +120,7 @@ export type DbPost = {
   suggested_comments?: string | null; // JSON string
   media_urls?: string | null; // JSON string
   seen?: number;
+  ai_score?: number;
 };
 
 // Domain Object (extends shared definition logic but with distinct Date type)
@@ -132,6 +133,7 @@ export type Post = {
   commentCount: number;
   likeCount?: number | null;
   score: number;
+  aiScore?: number;
   isCurated: boolean;
   mediaType: MediaType;
   caption?: string | null;
@@ -165,7 +167,8 @@ const toDb = (p: Post): DbPost => ({
   user_comment: p.userComment,
   suggested_comments: p.suggestedComments ? JSON.stringify(p.suggestedComments) : null,
   media_urls: p.mediaUrls ? JSON.stringify(p.mediaUrls) : null,
-  seen: p.seen ? 1 : 0
+  seen: p.seen ? 1 : 0,
+  ai_score: p.aiScore
 });
 
 const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post => ({
@@ -187,14 +190,15 @@ const fromDb = (row: DbPost & { run_date?: string, run_status?: string }): Post 
   suggestedComments: row.suggested_comments ? JSON.parse(row.suggested_comments) : [],
   mediaUrls: row.media_urls ? JSON.parse(row.media_urls) : [],
   seen: !!row.seen,
+  aiScore: row.ai_score,
   runDate: row.run_date,
   runStatus: row.run_status
 });
 
 export const savePosts = (posts: Post[]) => {
   const insert = db.prepare(`
-    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment, media_urls, suggested_comments, seen)
-    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment, @media_urls, @suggested_comments, @seen)
+    INSERT INTO posts (run_id, profile_handle, post_url, shortcode, posted_at, comment_count, like_count, score, is_curated, media_type, caption, accessibility_caption, has_liked, username, user_comment, media_urls, suggested_comments, seen, ai_score)
+    VALUES (@run_id, @profile_handle, @post_url, @shortcode, @posted_at, @comment_count, @like_count, @score, @is_curated, @media_type, @caption, @accessibility_caption, @has_liked, @username, @user_comment, @media_urls, @suggested_comments, @seen, @ai_score)
     ON CONFLICT(shortcode) DO UPDATE SET
       run_id = excluded.run_id,
       comment_count = excluded.comment_count,
@@ -206,7 +210,8 @@ export const savePosts = (posts: Post[]) => {
       has_liked = excluded.has_liked,
       username = excluded.username,
       media_urls = excluded.media_urls,
-      suggested_comments = excluded.suggested_comments
+      suggested_comments = excluded.suggested_comments,
+      ai_score = excluded.ai_score
   `);
   const insertMany = db.transaction((posts: Post[]) => {
     for (const post of posts) insert.run(toDb(post));
@@ -218,8 +223,8 @@ export const updatePostComment = (shortcode: string, comment: string) => {
     db.prepare('UPDATE posts SET user_comment = ? WHERE shortcode = ?').run(comment, shortcode);
 };
 
-export const updatePostSuggestions = (shortcode: string, suggestions: string[]) => {
-    db.prepare('UPDATE posts SET suggested_comments = ? WHERE shortcode = ?').run(JSON.stringify(suggestions), shortcode);
+export const updatePostSuggestionsAndScore = (shortcode: string, suggestions: string[], aiScore: number) => {
+    db.prepare('UPDATE posts SET suggested_comments = ?, ai_score = ? WHERE shortcode = ?').run(JSON.stringify(suggestions), aiScore, shortcode);
 };
 
 export const updatePostLikeStatus = (shortcode: string, hasLiked: boolean) => {
@@ -247,7 +252,7 @@ export const getAllCuratedPosts = (): Post[] => {
         FROM posts p 
         JOIN runs r ON p.run_id = r.id 
         WHERE p.is_curated = 1 
-        ORDER BY p.run_id DESC, p.score DESC
+        ORDER BY p.posted_at DESC
     `).all() as (DbPost & { run_date: string, run_status: string })[];
     return rows.map(fromDb);
 };

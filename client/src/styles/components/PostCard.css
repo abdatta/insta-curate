@@ -318,3 +318,46 @@
 .post-link:hover {
     color: var(--color-primary);
 }
+
+/* Context Input */
+.context-input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 4px;
+    background: #f9fafb;
+}
+
+.context-input:focus {
+    border-style: solid;
+    border-color: var(--color-primary);
+    outline: none;
+    background: white;
+}
+
+/* Score Badges */
+.badge-score-10 {
+    background: #FF0000;
+    color: white;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.badge-score-high {
+    background: #FECACA; /* Red-200 */
+    color: #991B1B; /* Red-800 */
+}
+
+.badge-score-med {
+    background: #FEF3C7; /* Amber-100 */
+    color: #92400E; /* Amber-800 */
+}
+
+.badge-score-low {
+    background: #F3F4F6; /* Gray-100 */
+    color: #4B5563; /* Gray-600 */
+}

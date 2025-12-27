@@ -1,4 +1,5 @@
 import type { CuratedResponse, ProgressResponse, Settings, ProfilesResponse } from '../types';
+import type { CommentSuggestionResponse } from '../../../shared/types';
 
 export const api = {
   async getLatestCurated(): Promise<CuratedResponse> {
@@ -92,13 +93,15 @@ export const api = {
     }
   },
 
-  async generateComments(shortcode: string): Promise<string[]> {
+  async generateComments(shortcode: string, context?: string): Promise<CommentSuggestionResponse> {
       const res = await fetch(`/api/posts/${shortcode}/generate-comments`, {
-          method: 'POST'
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ context })
       });
       if (!res.ok) throw new Error('Failed to generate comments');
       const data = await res.json();
-      return data.comments;
+      return data; // { comments, score }
   },
 
   async markSeen(shortcode: string, seen: boolean): Promise<void> {

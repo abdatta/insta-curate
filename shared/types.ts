@@ -17,6 +17,7 @@ export interface Post {
   commentCount: number;
   likeCount?: number | null;
   score: number;
+  aiScore?: number; // 0-10, computed by AI
   isCurated: boolean;
   mediaType: MediaType;
   caption?: string | null;
@@ -31,4 +32,9 @@ export interface Post {
   // Joins
   runDate?: string;
   runStatus?: string;
+}
+
+export interface CommentSuggestionResponse {
+    comments: string[];
+    score: number; // 0-10
 }

@@ -12,3 +12,6 @@
 | **Badge** | UI marker for post freshness: **New** (<24h, Blue), **Late** (24-48h, Orange), **Old** (>48h, Grey). | `client/src/components/PostCard.tsx` |
 | **User Comment** | A local draft or approved comment stored in our DB before actually being posted to IG. | `posts.user_comment` |
 | **Structured Output** | OpenAI feature ensuring JSON responses strictly follow a defined Schema. | `src/services/ai.ts` |
+| **Commentability Score** | AI-generated rating (0-10) of how natural/valuable it is for the Persona to comment on a post. | `src/services/ai.ts` |
+| **Persona** | The specific identity (30yo LA fitness/lifestyle creator, "soft-glow" vibe) adopted by the AI for comments. | `src/services/ai.ts` |
+| **Context** | User-provided text hint to guide the AI's comment generation logic. | `client/src/components/PostCard.tsx` |
