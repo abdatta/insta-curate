@@ -11,7 +11,8 @@
     "start": "node dist/src/main.js",
     "login": "tsx src/curator/auth.ts",
     "curate": "tsx src/curator/runCuration.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -32,8 +33,14 @@
     "@types/node-cron": "^3.0.11",
     "@types/web-push": "^3.3.2",
     "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }

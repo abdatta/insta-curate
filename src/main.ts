@@ -31,18 +31,18 @@ async function start() {
     // 1. Database
     runMigrations();
     console.log('Database ready.');
-    
+
     // 1.1 Cleanup stuck runs
-    await import('./db/repo').then(r => r.failStuckRuns());
+    await import('./db/repo').then((r) => r.failStuckRuns());
 
     // 1.5 Push
     initVapid();
     console.log('VAPID ready.');
-    
+
     // 2. Scheduler
     initScheduler();
     console.log('Scheduler ready.');
-    
+
     // 3. Server
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);

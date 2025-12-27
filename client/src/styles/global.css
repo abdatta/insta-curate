@@ -1,5 +1,7 @@
 /* Global Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -10,7 +12,9 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
 }
 
 button {

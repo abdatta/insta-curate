@@ -21,9 +21,9 @@ We will create a `shared/` directory to host TypeScript interfaces and Enums tha
 ## Consequences
 
 - **Pros**:
-    - Compile-time safety across the network boundary.
-    - Zero duplication of interface definitions.
-    - Eliminates "snake_case vs camelCase" bugs.
+  - Compile-time safety across the network boundary.
+  - Zero duplication of interface definitions.
+  - Eliminates "snake_case vs camelCase" bugs.
 - **Cons**:
-    - Requires strict discipline to update `shared` when fields change.
-    - `shared/` must be included in both `tsconfig.json` configurations.
+  - Requires strict discipline to update `shared` when fields change.
+  - `shared/` must be included in both `tsconfig.json` configurations.

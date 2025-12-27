@@ -5,16 +5,29 @@ export function timeAgo(timestamp: string | number): string {
 
   // Less than a week
   if (seconds < 604800) {
-    if (seconds < 60) return "just now";
+    if (seconds < 60) return 'just now';
     const minutes = seconds / 60;
-    if (minutes < 60) return Math.floor(minutes) + "m ago";
+    if (minutes < 60) return Math.floor(minutes) + 'm ago';
     const hours = minutes / 60;
-    if (hours < 24) return Math.floor(hours) + "h ago";
+    if (hours < 24) return Math.floor(hours) + 'h ago';
     const days = hours / 24;
-    return Math.floor(days) + "d ago";
+    return Math.floor(days) + 'd ago';
   }
 
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   const month = months[date.getMonth()];
   const day = date.getDate();
   const year = date.getFullYear();
@@ -29,15 +42,15 @@ export function timeAgo(timestamp: string | number): string {
 export function escapeHtml(text: string): string {
   if (!text) return '';
   return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 export function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
     .replace(/\-/g, '+')
     .replace(/_/g, '/');

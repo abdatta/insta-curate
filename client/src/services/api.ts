@@ -1,4 +1,9 @@
-import type { CuratedResponse, ProgressResponse, Settings, ProfilesResponse } from '../types';
+import type {
+  CuratedResponse,
+  ProgressResponse,
+  Settings,
+  ProfilesResponse,
+} from '../types';
 import type { CommentSuggestionResponse } from '../../../shared/types';
 
 export const api = {
@@ -41,27 +46,27 @@ export const api = {
 
   async addProfile(handle: string): Promise<void> {
     const res = await fetch('/api/admin/profiles/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ handle }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ handle }),
     });
     if (!res.ok) throw new Error('Failed to add profile');
   },
 
   async deleteProfile(handle: string): Promise<void> {
     const res = await fetch(`/api/admin/profiles/${handle}`, {
-        method: 'DELETE'
+      method: 'DELETE',
     });
     if (!res.ok) throw new Error('Failed to delete profile');
   },
 
   async toggleProfile(handle: string, enabled: boolean): Promise<void> {
-      const res = await fetch(`/api/admin/profiles/${handle}/toggle`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled })
-      });
-      if (!res.ok) throw new Error('Failed to toggle profile');
+    const res = await fetch(`/api/admin/profiles/${handle}/toggle`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    });
+    if (!res.ok) throw new Error('Failed to toggle profile');
   },
 
   async getSettings(): Promise<Settings> {
@@ -84,48 +89,51 @@ export const api = {
       body: JSON.stringify({ comment }),
     });
     if (!res.ok) {
-        let message = 'Failed to post comment';
-        try {
-            const errData = await res.json();
-            if (errData.error) message = errData.error;
-        } catch {}
-        throw new Error(message);
+      let message = 'Failed to post comment';
+      try {
+        const errData = await res.json();
+        if (errData.error) message = errData.error;
+      } catch {}
+      throw new Error(message);
     }
   },
 
-  async generateComments(shortcode: string, context?: string): Promise<CommentSuggestionResponse> {
-      const res = await fetch(`/api/posts/${shortcode}/generate-comments`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ context })
-      });
-      if (!res.ok) throw new Error('Failed to generate comments');
-      const data = await res.json();
-      return data; // { comments, score }
+  async generateComments(
+    shortcode: string,
+    context?: string
+  ): Promise<CommentSuggestionResponse> {
+    const res = await fetch(`/api/posts/${shortcode}/generate-comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ context }),
+    });
+    if (!res.ok) throw new Error('Failed to generate comments');
+    const data = await res.json();
+    return data; // { comments, score }
   },
 
   async markSeen(shortcode: string, seen: boolean): Promise<void> {
-      const res = await fetch(`/api/posts/${shortcode}/seen`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ seen })
-      });
-      if (!res.ok) throw new Error('Failed to update seen status');
+    const res = await fetch(`/api/posts/${shortcode}/seen`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seen }),
+    });
+    if (!res.ok) throw new Error('Failed to update seen status');
   },
 
   async getVapidKey(): Promise<string> {
-      const res = await fetch('/api/push/vapidPublicKey');
-      if (!res.ok) throw new Error('Failed to fetch VAPID key');
-      const data = await res.json();
-      return data.publicKey;
+    const res = await fetch('/api/push/vapidPublicKey');
+    if (!res.ok) throw new Error('Failed to fetch VAPID key');
+    const data = await res.json();
+    return data.publicKey;
   },
 
   async subscribe(subscription: PushSubscriptionJSON): Promise<void> {
-      const res = await fetch('/api/push/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(subscription)
-      });
-      if (!res.ok) throw new Error('Failed to save subscription');
-  }
+    const res = await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subscription),
+    });
+    if (!res.ok) throw new Error('Failed to save subscription');
+  },
 };

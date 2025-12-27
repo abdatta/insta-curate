@@ -1,69 +1,75 @@
-#app { 
-  max-width: 600px; 
-  margin: 0 auto; 
-  background: var(--color-card-bg); 
-  min-height: 100vh; 
-  box-shadow: var(--shadow-lg); 
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--color-card-bg);
+  min-height: 100vh;
+  box-shadow: var(--shadow-lg);
 }
 
-header { 
-  padding: 1rem; 
-  border-bottom: 1px solid var(--color-border); 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
+header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-h1 { 
-  margin: 0; 
-  font-size: 1.2rem; 
+h1 {
+  margin: 0;
+  font-size: 1.2rem;
 }
 
-.tabs { 
-  display: flex; 
-  border-bottom: 1px solid var(--color-border); 
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.tab-btn { 
-  flex: 1; 
-  padding: 1rem; 
-  background: none; 
-  border: none; 
-  font-weight: 600; 
-  color: var(--color-text-secondary); 
-  border-bottom: 2px solid transparent; 
+.tab-btn {
+  flex: 1;
+  padding: 1rem;
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
 }
 
-.tab-btn.active { 
-  color: var(--color-primary); 
-  border-bottom-color: var(--color-primary); 
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
-.tab-content { 
-  padding: 1rem; 
-  animation: fadeIn 0.3s ease-out; 
+.tab-content {
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn { 
-  from { opacity: 0; transform: translateY(5px); } 
-  to { opacity: 1; transform: translateY(0); } 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.controls { 
-  margin-bottom: 1rem; 
-  display: flex; 
-  gap: 1rem; 
+.controls {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
-.controls button { 
-  background: var(--color-bg); 
-  border: 1px solid var(--color-border); 
-  padding: 0.5rem 1rem; 
-  border-radius: 4px; 
+.controls button {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
 }
 
-.controls button:hover { 
-  background: #eee; 
+.controls button:hover {
+  background: #eee;
 }
 
 .status-text {

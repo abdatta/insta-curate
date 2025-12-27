@@ -19,6 +19,7 @@ client/
 ## Design System
 
 Theming is handled entirely via CSS Variables in `src/styles/tokens.css`.
+
 - **Tokens**: Colors (`--color-primary`), Spacing (`--space-4`), Typography, etc.
 - **Dark Mode**: Supported via `[data-theme="dark"]` selector overrides.
 - **Convention**: Use tokens for all styling. Avoid hardcoded hex values or pixels.

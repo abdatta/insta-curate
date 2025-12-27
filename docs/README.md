@@ -27,11 +27,11 @@
 3.  **The Database (`src/db/`)**
     - **Tech**: `better-sqlite3`.
     - **Schema**:
-        - `settings`: Key-value store.
-        - `profiles`: Target handles to scrape.
-        - `runs`: Audit log of executions.
-        - `posts`: The curated content (normalized, includes `user_comment`).
-        - `push_subscriptions`: VAPID endpoints for notifications.
+      - `settings`: Key-value store.
+      - `profiles`: Target handles to scrape.
+      - `runs`: Audit log of executions.
+      - `posts`: The curated content (normalized, includes `user_comment`).
+      - `push_subscriptions`: VAPID endpoints for notifications.
 
 4.  **The Frontend (`client/`)**
     - **Tech**: Vite, Preact, TypeScript, CSS Modules (Tokens).

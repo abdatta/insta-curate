@@ -3,17 +3,17 @@ export const SELECTORS = {
   LOGIN_USERNAME: 'input[name="username"]',
   LOGIN_PASSWORD: 'input[name="password"]',
   LOGIN_SUBMIT: 'button[type="submit"]',
-  
+
   // Profile
   POST_GRID_ITEM: 'article a[href^="/p/"]',
-  
+
   // Post Detail
   TIME_ELEMENT: 'time[datetime]', // Standard ISO time
   COMMENT_COUNT_LABEL: 'ul > li span', // Fallback, often hard.
   // Better approach for comments: look for "View all X comments" button or use meta tags?
   // Meta tags in head are often reliable even if SPA.
   // Or look for specific Aria labels.
-  
+
   // Dialogs
   CLOSE_MODAL: '[aria-label="Close"]',
   NOT_NOW_BUTTON: '//button[text()="Not Now"]',

@@ -24,11 +24,13 @@ We decided to migrate the `client/` directory to a **Vite + Preact + TypeScript*
 ## Consequences
 
 ### Positive
+
 - **Maintainability**: Components (`PostCard`, `Settings`) are isolated and testable.
 - **Type Safety**: `Post` and `Task` types are shared/consistent.
 - **Developer Experience**: HMR makes UI iteration much faster than refreshing the Express server.
 - **Scalability**: Easier to add complex features (like the visual progress tracker) without spaghetti DOM code.
 
 ### Negative
+
 - **Build Step**: Requires `npm run build` (handled by `npm run dev` concurrency or explicitly).
 - **Dependencies**: Added `vite`, `preact`, `typescript` and build tools to `package.json`.

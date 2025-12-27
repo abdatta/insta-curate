@@ -7,6 +7,7 @@
 **Goal**: Build a personal, locally-hosted tool to curate high-quality Instagram posts from a specific list of profiles, filtering out noise so the user can see only the "best" content (high engagement/recency) without doom-scrolling.
 
 **Constraints & Non-Goals**:
+
 - **NOT a SaaS**: Use local storage (SQLite), local execution (Playwright on dev machine/server). No multi-tenancy.
 - **NOT an aggressive bot**: scraping is passive (reading timeline), low volume, and read-only. **Writing (Likes/Comments)** is user-initiated and rate-limited by manual speed.
 - **Visuals Matter**: The Admin UI for the user needs to be aesthetic (Vanilla CSS, "Premium" feel).
@@ -14,17 +15,18 @@
 ## 2. Current State (as of Dec 2025)
 
 - **Scraper**: Functional. Uses **Network Interception** (Playwright `waitForResponse`) to capture `graphql/query` JSON responses.
-    - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
+  - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
 - **Curation**: Implemented. Score = `engagement * recency_decay`. Sorts by `posted_at DESC`.
-    - **Admin UI**:
-    - **Comment Flow**: AI suggestion review with **Context Input**, manual editing, and **Automated Posting**.
-    - **AI Engine**: **Persona-driven** (30yo LA creator) generation with **Commentability Score (0-10)** and "soft-glow" vibe. Explicitly avoids generic phrases.
-    - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
+  - **Admin UI**:
+  - **Comment Flow**: AI suggestion review with **Context Input**, manual editing, and **Automated Posting**.
+  - **AI Engine**: **Persona-driven** (30yo LA creator) generation with **Commentability Score (0-10)** and "soft-glow" vibe. Explicitly avoids generic phrases.
+  - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
 - **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
 - **Notifications**: Web Push (VAPID) enabled with **PWA Permission Toggle**. Sends alerts on run completion (with new post counts).
 - **Frontend**: Vite + Preact + TypeScript PWA. Uses **Shared Types** for strict API contracts. Lists curated posts, allows manual triggering of runs (with progress UI), and supports comment approval workflow.
 
 **Known Issues**:
+
 - Instagram might prompt for login or challenge occasionally (handled via `auth.ts` manual login flow).
 - **Headless Mode**: Curation runs in `headless: true`. Manual login requires temporarily switching to `false` in `auth.ts` if needed, though current logic persists state well.
 
@@ -42,6 +44,7 @@ npm run build
 ```
 
 **Key Commands**:
+
 - `npm run dev`: Starts the Backend (Express) and Frontend (Vite) concurrently.
 - `npx playwright test`: (If tests are added later).
 

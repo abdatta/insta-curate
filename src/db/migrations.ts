@@ -48,20 +48,44 @@ export function runMigrations() {
       created_at TEXT
     );
   `;
-  
+
   db.exec(schema);
-  
-  try { db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_posts_shortcode ON posts(shortcode)"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN media_type INTEGER DEFAULT 1"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN caption TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN accessibility_caption TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN has_liked INTEGER DEFAULT 0"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN username TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN user_comment TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN suggested_comments TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN media_urls TEXT"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN seen INTEGER DEFAULT 0"); } catch (e) {}
-  try { db.exec("ALTER TABLE posts ADD COLUMN ai_score REAL"); } catch (e) {}
-  
+
+  try {
+    db.exec(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_posts_shortcode ON posts(shortcode)'
+    );
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN media_type INTEGER DEFAULT 1');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN caption TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN accessibility_caption TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN has_liked INTEGER DEFAULT 0');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN username TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN user_comment TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN suggested_comments TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN media_urls TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN seen INTEGER DEFAULT 0');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE posts ADD COLUMN ai_score REAL');
+  } catch (e) {}
+
   console.log('Migrations run successfully');
 }

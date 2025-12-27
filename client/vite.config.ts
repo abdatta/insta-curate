@@ -11,8 +11,8 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   resolve: {
     alias: {
-      '@shared': path.resolve(__dirname, '../shared')
-    }
+      '@shared': path.resolve(__dirname, '../shared'),
+    },
   },
   plugins: [
     preact(),
@@ -22,7 +22,7 @@ export default defineConfig({
       filename: 'sw.ts',
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true
+        enabled: true,
       },
       manifest: {
         name: 'InstaCurate',
@@ -35,29 +35,27 @@ export default defineConfig({
           {
             src: '/icons/icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: '/icons/icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
+            type: 'image/png',
+          },
+        ],
+      },
+    }),
   ],
   server: {
-    allowedHosts: [
-      "icurate.abdatta.com"
-    ],
+    allowedHosts: ['icurate.abdatta.com'],
     fs: {
-      allow: ['..']
+      allow: ['..'],
     },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
-        changeOrigin: true
-      }
-    }
-  }
-})
+        changeOrigin: true,
+      },
+    },
+  },
+});

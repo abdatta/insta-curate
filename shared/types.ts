@@ -2,7 +2,7 @@
 export const MediaType = {
   Image: 1,
   Video: 2,
-  Carousel: 8
+  Carousel: 8,
 } as const;
 
 export type MediaType = (typeof MediaType)[keyof typeof MediaType];
@@ -28,13 +28,13 @@ export interface Post {
   suggestedComments?: string[];
   mediaUrls?: string[];
   seen: boolean;
-  
+
   // Joins
   runDate?: string;
   runStatus?: string;
 }
 
 export interface CommentSuggestionResponse {
-    comments: string[];
-    score: number; // 0-10
+  comments: string[];
+  score: number; // 0-10
 }
