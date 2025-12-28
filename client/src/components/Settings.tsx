@@ -10,10 +10,15 @@ interface SettingsProps {
 }
 
 export function Settings({ onRunComplete }: SettingsProps) {
+  // Settings State
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [newProfile, setNewProfile] = useState('');
+
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
   const [scheduleInterval, setScheduleInterval] = useState(4);
+  const [notificationSkipEmpty, setNotificationSkipEmpty] = useState(false);
+
+  const [nextRun, setNextRun] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Run State
@@ -26,13 +31,17 @@ export function Settings({ onRunComplete }: SettingsProps) {
   useEffect(() => {
     async function load() {
       try {
-        const [pData, sData] = await Promise.all([
+        const [pData, sData, statusVal] = await Promise.all([
           api.getProfiles(),
           api.getSettings(),
+          api.getStatus(),
         ]);
         setProfiles(pData.profiles);
         setScheduleEnabled(sData.schedule_enabled);
         setScheduleInterval(sData.schedule_interval_hours);
+        setNotificationSkipEmpty(sData.notification_skip_empty);
+
+        if (statusVal.nextRun) setNextRun(statusVal.nextRun);
       } catch (e) {
         console.error(e);
       } finally {
@@ -87,7 +96,10 @@ export function Settings({ onRunComplete }: SettingsProps) {
           setTasks(progress.tasks);
           completionHandledRef.current = true;
 
+          // Refresh next run time if successful
           if (currentStatus === 'completed') {
+            api.getStatus().then((s) => s.nextRun && setNextRun(s.nextRun));
+
             if (onRunComplete) {
               setTimeout(() => {
                 setRunStatus('idle');
@@ -193,14 +205,33 @@ export function Settings({ onRunComplete }: SettingsProps) {
     }
   };
 
-  const saveSchedule = async (enabled: boolean, interval: number) => {
+  const updateSettings = async (updates: {
+    enabled?: boolean;
+    interval?: number;
+    skipEmpty?: boolean;
+  }) => {
+    // Current values fallback
+    const newEnabled = updates.enabled ?? scheduleEnabled;
+    const newInterval = updates.interval ?? scheduleInterval;
+    const newSkip = updates.skipEmpty ?? notificationSkipEmpty;
+
     try {
       await api.saveSettings({
-        schedule_enabled: enabled,
-        schedule_interval_hours: interval,
+        schedule_enabled: newEnabled,
+        schedule_interval_hours: newInterval,
+        notification_skip_empty: newSkip,
       });
-      setScheduleEnabled(enabled);
-      setScheduleInterval(interval);
+
+      if (updates.enabled !== undefined) setScheduleEnabled(updates.enabled);
+      if (updates.interval !== undefined) setScheduleInterval(updates.interval);
+      if (updates.skipEmpty !== undefined)
+        setNotificationSkipEmpty(updates.skipEmpty);
+
+      // Refresh next run if schedule changed
+      if (updates.enabled !== undefined || updates.interval !== undefined) {
+        const s = await api.getStatus();
+        if (s.nextRun) setNextRun(s.nextRun);
+      }
     } catch (e) {
       alert('Error saving settings');
     }
@@ -217,6 +248,21 @@ export function Settings({ onRunComplete }: SettingsProps) {
         </div>
       </div>
     );
+
+  // Format next run
+  let nextRunText = '';
+  if (nextRun && scheduleEnabled) {
+    const d = new Date(nextRun);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    const timeStr = d.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    nextRunText = isToday
+      ? `Next Run: Today at ${timeStr}`
+      : `Next Run: ${d.toLocaleDateString()} at ${timeStr}`;
+  }
 
   return (
     <div class="settings-container">
@@ -252,7 +298,7 @@ export function Settings({ onRunComplete }: SettingsProps) {
               type="checkbox"
               checked={scheduleEnabled}
               onChange={(e) =>
-                saveSchedule(e.currentTarget.checked, scheduleInterval)
+                updateSettings({ enabled: e.currentTarget.checked })
               }
             />
             Enable Schedule
@@ -261,7 +307,7 @@ export function Settings({ onRunComplete }: SettingsProps) {
             <select
               value={scheduleInterval}
               onChange={(e) =>
-                saveSchedule(scheduleEnabled, parseInt(e.currentTarget.value))
+                updateSettings({ interval: parseInt(e.currentTarget.value) })
               }
               class="schedule-select"
             >
@@ -273,6 +319,31 @@ export function Settings({ onRunComplete }: SettingsProps) {
             </select>
           </div>
         </div>
+        {scheduleEnabled && nextRunText && (
+          <div
+            style={{
+              marginTop: '0.5rem',
+              fontSize: '0.9rem',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {nextRunText}
+          </div>
+        )}
+      </div>
+
+      <div class="setting-group">
+        <h3>Notifications</h3>
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            checked={notificationSkipEmpty}
+            onChange={(e) =>
+              updateSettings({ skipEmpty: e.currentTarget.checked })
+            }
+          />
+          Skip notification if 0 posts found
+        </label>
       </div>
 
       <div class="setting-group">
@@ -289,45 +360,88 @@ export function Settings({ onRunComplete }: SettingsProps) {
         />
 
         <div class="profile-list">
-          {profiles.map((profile) => (
-            <div
-              key={profile.handle}
-              class={`profile-item ${!profile.is_enabled ? 'disabled' : ''}`}
-            >
-              <span class="profile-handle">@{profile.handle}</span>
-              <div class="profile-actions">
-                <label class="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={!!profile.is_enabled}
-                    onChange={() => handleToggleProfile(profile)}
-                  />
-                  <span class="slider"></span>
-                </label>
+          {profiles.map((profile) => {
+            const total = profile.total_curated || 0;
+            const liked = profile.liked_curated || 0;
+            const pct =
+              total > 0 ? Math.min(100, Math.max(0, (liked / total) * 100)) : 0;
 
-                <button
-                  class="btn-delete"
-                  onClick={() => handleDeleteProfile(profile.handle)}
-                  title="Delete Profile"
+            let barColor = 'rgba(0,0,0,0.05)';
+            if (total > 0) {
+              if (pct < 25)
+                barColor = '#fee2e2'; // Light Red
+              else if (pct > 75)
+                barColor = '#dcfce7'; // Light Green
+              else barColor = '#ffedd5'; // Light Orange
+            }
+
+            const baseBg = !profile.is_enabled ? '#f3f4f6' : '#ffffff';
+            const style =
+              total > 0
+                ? {
+                    background: `linear-gradient(90deg, ${barColor} ${pct}%, ${baseBg} ${pct}%)`,
+                  }
+                : {};
+
+            return (
+              <div
+                key={profile.handle}
+                class={`profile-item ${!profile.is_enabled ? 'disabled' : ''}`}
+                style={style}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                    zIndex: 1,
+                  }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                  <span class="profile-handle">@{profile.handle}</span>
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--color-text-secondary)',
+                    }}
                   >
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
+                    {liked} / {total} liked ({Math.round(pct)}%)
+                  </span>
+                </div>
+
+                <div class="profile-actions" style={{ zIndex: 1 }}>
+                  <label class="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={!!profile.is_enabled}
+                      onChange={() => handleToggleProfile(profile)}
+                    />
+                    <span class="slider"></span>
+                  </label>
+
+                  <button
+                    class="btn-delete"
+                    onClick={() => handleDeleteProfile(profile.handle)}
+                    title="Delete Profile"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

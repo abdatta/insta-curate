@@ -19,7 +19,7 @@ import {
 } from './db/repo';
 import { runCuration } from './curator/runCuration';
 import { getVapidPublicKey } from './push/vapid';
-import { scheduleNextRun } from './scheduler';
+import { scheduleNextRun, getNextRunTime } from './scheduler';
 
 const router = express.Router();
 
@@ -155,9 +155,11 @@ router.post('/admin/run', async (req, res) => {
 // GET /api/admin/status
 router.get('/admin/status', (req, res) => {
   const run = getLatestRun();
+  const nextRun = getNextRunTime();
   res.json({
     running: run?.status === 'running',
     lastRun: run,
+    nextRun: nextRun ? nextRun.toISOString() : null,
   });
 });
 
@@ -174,18 +176,23 @@ router.get('/admin/settings', (req, res) => {
     schedule_interval_hours: parseInt(
       getSetting('schedule_interval_hours') || '12'
     ),
+    notification_skip_empty: getSetting('notification_skip_empty') === 'true',
   });
 });
 
 // POST /api/admin/settings
 router.post('/admin/settings', (req, res) => {
-  const { schedule_enabled, schedule_interval_hours } = req.body;
+  const { schedule_enabled, schedule_interval_hours, notification_skip_empty } =
+    req.body;
 
   if (typeof schedule_enabled === 'boolean') {
     setSetting('schedule_enabled', String(schedule_enabled));
   }
   if (schedule_interval_hours) {
     setSetting('schedule_interval_hours', String(schedule_interval_hours));
+  }
+  if (typeof notification_skip_empty === 'boolean') {
+    setSetting('notification_skip_empty', String(notification_skip_empty));
   }
 
   // Refresh scheduler

@@ -20,10 +20,35 @@ export function App() {
     const checkStatus = async () => {
       try {
         const s = await api.getStatus();
+        let text = '';
+
         if (s.lastRun) {
           const finished = s.lastRun.finished_at || s.lastRun.started_at;
-          setStatusText(`Last Run: ${timeAgo(finished)}`);
+          text = `Last Run: ${timeAgo(finished)}`;
         }
+
+        if (s.nextRun) {
+          const next = new Date(s.nextRun);
+          // Format: "Next Run at 14:00" or "Next Run at Dec 28 14:00"
+          // If it's today, show time?
+          const dateStr =
+            next.toLocaleDateString() === new Date().toLocaleDateString()
+              ? next.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : next.toLocaleString([], {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+
+          if (text) text += ' • ';
+          text += `Next Run at ${dateStr}`;
+        }
+
+        setStatusText(text);
       } catch {}
     };
     checkStatus();

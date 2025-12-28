@@ -16,9 +16,28 @@ export const setSetting = (key: string, value: string) => {
 };
 
 // Profiles
-export type Profile = { id: number; handle: string; is_enabled: number };
+export type Profile = {
+  id: number;
+  handle: string;
+  is_enabled: number;
+  total_curated?: number;
+  liked_curated?: number;
+};
 export const getProfiles = (): Profile[] => {
   return db.prepare('SELECT * FROM profiles').all() as Profile[];
+};
+
+export const getAllProfiles = (): Profile[] => {
+  return db
+    .prepare(
+      `
+    SELECT p.*, 
+      (SELECT COUNT(*) FROM posts WHERE profile_handle = p.handle AND is_curated = 1) as total_curated,
+      (SELECT COUNT(*) FROM posts WHERE profile_handle = p.handle AND is_curated = 1 AND has_liked = 1) as liked_curated
+    FROM profiles p
+  `
+    )
+    .all() as Profile[];
 };
 
 export const upsertProfiles = (handles: string[]) => {
@@ -72,10 +91,6 @@ export const setProfileEnabled = (handle: string, enabled: boolean) => {
     enabled ? 1 : 0,
     handle
   );
-};
-
-export const getAllProfiles = (): Profile[] => {
-  return db.prepare('SELECT * FROM profiles').all() as Profile[];
 };
 
 // Runs
@@ -320,7 +335,7 @@ export const getAllCuratedPosts = (): Post[] => {
         FROM posts p 
         JOIN runs r ON p.run_id = r.id 
         WHERE p.is_curated = 1 
-        ORDER BY p.posted_at DESC
+        ORDER BY p.run_id DESC, p.posted_at DESC
     `
     )
     .all() as (DbPost & { run_date: string; run_status: string })[];

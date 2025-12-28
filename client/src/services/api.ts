@@ -26,7 +26,11 @@ export const api = {
     return res.json();
   },
 
-  async getStatus(): Promise<{ lastRun?: any }> {
+  async getStatus(): Promise<{
+    lastRun?: any;
+    nextRun?: string;
+    running?: boolean;
+  }> {
     const res = await fetch('/api/admin/status');
     return res.json();
   },

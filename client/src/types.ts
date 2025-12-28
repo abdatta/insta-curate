@@ -33,12 +33,15 @@ export interface ProgressResponse {
 export interface Settings {
   schedule_enabled: boolean;
   schedule_interval_hours: number;
+  notification_skip_empty: boolean;
 }
 
 export interface Profile {
   id: number;
   handle: string;
   is_enabled: number;
+  total_curated?: number;
+  liked_curated?: number;
 }
 
 export interface ProfilesResponse {

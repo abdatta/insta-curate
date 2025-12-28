@@ -244,15 +244,20 @@ export async function runCuration() {
     progress.updateTaskStatus(TASK_DONE, 'done');
     progress.completeProgress();
 
-    // Notify always
-    try {
-      await sendPushNotification({
-        title: 'Curation finished',
-        body: `Success: ${finalSelection.length} curated posts (${newPostCount} new)`,
-        url: '/',
-      });
-    } catch (e) {
-      console.error('Failed to send push', e);
+    // Notify custom logic
+    const skipIfEmpty = repo.getSetting('notification_skip_empty') === 'true';
+    if (skipIfEmpty && newPostCount === 0) {
+      console.log('Skipping notification (0 new posts and skip_empty is on)');
+    } else {
+      try {
+        await sendPushNotification({
+          title: 'Curation finished',
+          body: `Success: ${finalSelection.length} curated posts (${newPostCount} new)`,
+          url: '/',
+        });
+      } catch (e) {
+        console.error('Failed to send push', e);
+      }
     }
   } catch (err: any) {
     console.error('Curation failed:', err);
