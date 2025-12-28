@@ -4,17 +4,32 @@
   margin: 0 auto;
   padding: 1rem;
   animation: fadeIn 0.3s ease;
+
+  /* default (light) profile bar colors */
+  --profile-bar-red: #fee2e2;
+  --profile-bar-green: #dcfce7;
+  --profile-bar-orange: #ffedd5;
+  --profile-bar-base: #ffffff;
+  --profile-bar-disabled: #f3f4f6;
+  --profile-bar-default: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .settings-container {
+  --profile-bar-red: #600c0c;
+  --profile-bar-green: #163f26;
+  --profile-bar-orange: #715708;
+  --profile-bar-base: var(--color-card-bg);
+  --profile-bar-disabled: var(--color-bg);
+  --profile-bar-default: rgba(255, 255, 255, 0.05);
 }
 
 .setting-group {
-  background: var(--color-bg-secondary, #ffffff);
+  background: var(--color-card-bg);
   margin-bottom: 2rem;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .setting-group h3 {
@@ -22,20 +37,20 @@
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 1.25rem;
-  color: var(--color-text-primary, #111827);
-  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.75rem;
 }
 
 .setting-group p {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   margin-bottom: 1rem;
   line-height: 1.5;
 }
 
 /* Modern Buttons (Primary) */
 .setting-group button:not(.btn-delete) {
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -48,13 +63,13 @@
 }
 
 .setting-group button:not(.btn-delete):hover {
-  background: var(--color-primary-hover, #1d4ed8);
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .setting-group button:disabled {
-  background: var(--color-disabled, #9ca3af);
+  background: #6b7280;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -65,19 +80,19 @@
 .profile-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border, #d1d5db);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--color-bg, #f9fafb);
-  color: var(--color-text-primary, #111827);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-size: 1rem;
   transition: all 0.2s ease;
 }
 
 .profile-input:focus {
   outline: none;
-  border-color: var(--color-primary, #2563eb);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  background: white;
+  background: var(--color-card-bg);
 }
 
 /* Profile List */
@@ -93,20 +108,20 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
-  background: white;
-  border: 1px solid var(--color-border, #e5e7eb);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 .profile-item:hover {
-  border-color: var(--color-primary, #2563eb);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .profile-item.disabled {
   opacity: 0.75;
-  background: var(--color-bg-tertiary, #f3f4f6);
+  background: var(--color-bg);
   border-style: dashed;
 }
 
@@ -114,11 +129,11 @@
   font-weight: 600;
   font-size: 1rem;
   font-family: 'Inter', system-ui, sans-serif;
-  color: var(--color-text-primary, #111827);
+  color: var(--color-text);
 }
 
 .profile-item.disabled .profile-handle {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 .profile-actions {
@@ -148,7 +163,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #e5e7eb;
+  background-color: var(--color-border);
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 24px;
 }
@@ -167,7 +182,7 @@
 }
 
 input:checked + .slider {
-  background-color: var(--color-primary, #2563eb);
+  background-color: var(--color-primary);
 }
 
 input:checked + .slider:before {
@@ -178,7 +193,7 @@ input:checked + .slider:before {
 .btn-delete {
   background: transparent;
   border: none;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
@@ -189,16 +204,16 @@ input:checked + .slider:before {
 }
 
 .btn-delete:hover {
-  color: #ef4444;
+  color: var(--color-error);
   background: rgba(239, 68, 68, 0.1);
 }
 
 /* Task List */
 .task-list {
   margin-top: 1.5rem;
-  border: 1px solid var(--color-border, #e5e7eb);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--color-bg, #f9fafb);
+  background: var(--color-bg);
   overflow-y: auto;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
@@ -208,8 +223,8 @@ input:checked + .slider:before {
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border, #e5e7eb);
-  background: white;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-card-bg);
 }
 
 .task-item:last-child {
@@ -227,15 +242,15 @@ input:checked + .slider:before {
   background-color: #d1d5db;
 }
 .status-processing {
-  background-color: var(--color-primary, #2563eb);
+  background-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   animation: pulse 1.5s infinite;
 }
 .status-done {
-  background-color: #10b981;
+  background-color: var(--color-success);
 }
 .status-failed {
-  background-color: #ef4444;
+  background-color: var(--color-error);
 }
 
 .task-info {
@@ -248,12 +263,12 @@ input:checked + .slider:before {
 .task-handle {
   font-weight: 500;
   font-size: 0.9rem;
-  color: var(--color-text-primary, #111827);
+  color: var(--color-text);
 }
 
 .task-message {
   font-size: 0.85rem;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 /* Schedule */
@@ -263,7 +278,7 @@ input:checked + .slider:before {
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
-  color: var(--color-text-primary, #111827);
+  color: var(--color-text);
   cursor: pointer;
 }
 
@@ -274,8 +289,9 @@ input:checked + .slider:before {
 .schedule-select {
   padding: 0.5rem 2rem 0.5rem 1rem;
   border-radius: 6px;
-  border: 1px solid var(--color-border, #d1d5db);
-  background-color: white;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card-bg);
+  color: var(--color-text);
   cursor: pointer;
   font-size: 0.95rem;
   transition: border-color 0.2s;
@@ -283,7 +299,7 @@ input:checked + .slider:before {
 
 .schedule-select:focus {
   outline: none;
-  border-color: var(--color-primary, #2563eb);
+  border-color: var(--color-primary);
 }
 
 @keyframes pulse {

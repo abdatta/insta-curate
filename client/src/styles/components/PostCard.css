@@ -49,6 +49,53 @@
   color: var(--color-text-secondary);
 }
 
+/* Badge Variables */
+.post-card {
+  --badge-new-bg: #e0f2fe;
+  --badge-new-text: #0284c7;
+  --badge-late-bg: #ffedd5;
+  --badge-late-text: #ea580c;
+  --badge-old-bg: #f3f4f6;
+  --badge-old-text: #4b5563;
+  --badge-liked-bg: #fce7f3;
+  --badge-liked-text: #db2777;
+  --badge-seen-bg: #fef9c3;
+  --badge-seen-text: #a16207;
+
+  /* Score Badges */
+  --score-10-bg: #ff0000;
+  --score-10-text: #ffffff;
+  --score-high-bg: #fecaca;
+  --score-high-text: #991b1b;
+  --score-med-bg: #fef3c7;
+  --score-med-text: #92400e;
+  --score-low-bg: #f3f4f6;
+  --score-low-text: #4b5563;
+}
+
+[data-theme='dark'] .post-card {
+  --badge-new-bg: #005689;
+  --badge-new-text: #e0f2fe;
+  --badge-late-bg: #653a00;
+  --badge-late-text: #ffedd5;
+  --badge-old-bg: #323438;
+  --badge-old-text: #e5e7eb;
+  --badge-liked-bg: #640000;
+  --badge-liked-text: #fce7f3;
+  --badge-seen-bg: #713f12;
+  --badge-seen-text: #fef9c3;
+
+  /* Score Badges Dark Mode */
+  --score-10-bg: #991b1b;
+  --score-10-text: #fee2e2;
+  --score-high-bg: #7f1d1d;
+  --score-high-text: #fecaca;
+  --score-med-bg: #78350f;
+  --score-med-text: #fef3c7;
+  --score-low-bg: #374151;
+  --score-low-text: #e5e7eb;
+}
+
 .badge {
   padding: 2px 6px;
   border-radius: 4px;
@@ -58,25 +105,29 @@
 }
 
 .badge-new {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: var(--badge-new-bg);
+  color: var(--badge-new-text);
 }
+
 .badge-late {
-  background: #ffedd5;
-  color: #ea580c;
+  background: var(--badge-late-bg);
+  color: var(--badge-late-text);
 }
+
 .badge-old {
-  background: #f3f4f6;
-  color: #4b5563;
+  background: var(--badge-old-bg);
+  color: var(--badge-old-text);
 }
+
 .badge-liked {
-  background: #fce7f3;
-  color: #db2777;
+  background: var(--badge-liked-bg);
+  color: var(--badge-liked-text);
 }
+
 .badge-seen {
-  background: #fef9c3;
-  color: #a16207;
-} /* Yellow-100 / Yellow-700 - boring yellow */
+  background: var(--badge-seen-bg);
+  color: var(--badge-seen-text);
+}
 
 .post-card.seen-card .post-header {
   opacity: 0.6;
@@ -102,6 +153,12 @@
   border-bottom: 1px solid var(--color-border);
   background: #fbfbfb;
   min-height: 400px;
+}
+/* Fix post-embed background in dark mode if needed, but #fbfbfb is close to light card.
+   Maybe should be var(--color-bg) or var(--color-card-bg)?
+   Keeping as is or improving: */
+[data-theme='dark'] .post-embed {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .instagram-iframe {
@@ -132,26 +189,27 @@
 .btn-use {
   font-size: 0.9rem;
   padding: 0.5rem 0.8rem;
-  background: #f9fafb;
+  background: var(--color-bg); /* was #f9fafb hardcoded */
   border: 1px solid var(--color-border);
   border-radius: 4px;
   text-align: left;
   width: 100%;
   cursor: pointer;
   transition: background-color 0.2s;
+  color: var(--color-text);
 }
 
 .btn-use:hover {
-  background: #f3f4f6;
-  border-color: var(--color-text-secondary); /* darken border slightly */
+  background: var(--color-border); /* slight darken */
+  border-color: var(--color-text-secondary);
 }
 
 .btn-generate {
   font-size: 0.8rem;
   padding: 0.4rem 0.8rem;
-  background: #e0f2fe;
-  color: #0284c7;
-  border: 1px solid #bae6fd;
+  background: var(--badge-new-bg); /* Reuse blue theme? or define own */
+  color: var(--badge-new-text);
+  border: 1px solid var(--badge-new-bg);
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
@@ -172,6 +230,8 @@
   padding: 0.6rem;
   border: 1px solid var(--color-border);
   border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .btn-post {
@@ -188,22 +248,32 @@
 }
 
 .saved-comment {
-  background: #f0fdf4; /* Green-50 */
-  border: 1px solid #bbf7d0; /* Green-200 */
+  background: var(--color-bg); /* fallback */
+  border: 1px solid var(--color-border);
   padding: var(--space-3);
-  /* margin-top moved to parent .post-comment-section */
   border-radius: 8px;
-  color: #15803d; /* Green-700 */
-  /* Premium touch: subtle shadow and icon-like feel */
+  color: var(--color-text);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
+/* Green theme for saved comment success state */
+.saved-comment {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+[data-theme='dark'] .saved-comment {
+  background: #14532d;
+  border-color: #166534;
+  color: #dcfce7;
+}
+
 .saved-comment strong {
   font-size: 0.8rem;
-  color: #166534; /* Green-800 */
+  color: inherit;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
@@ -218,8 +288,8 @@
   justify-content: center;
   width: 16px;
   height: 16px;
-  background: #166534;
-  color: white;
+  background: currentColor;
+  color: var(--color-bg); /* Inverse text color */
   border-radius: 50%;
   font-size: 10px;
 }
@@ -227,8 +297,6 @@
 /* Overlay for loading state */
 .comment-section-wrapper {
   position: relative;
-  /* Ensure styles like radius don't clip the overlay if needed, 
-       but here overlay is inside. */
 }
 
 .comment-overlay {
@@ -249,6 +317,10 @@
   font-weight: 500;
 }
 
+[data-theme='dark'] .comment-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
 .spinner {
   width: 24px;
   height: 24px;
@@ -257,6 +329,11 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 0.5rem;
+}
+
+[data-theme='dark'] .spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
 }
 
 @keyframes spin {
@@ -314,13 +391,19 @@
 }
 
 .btn-icon:hover {
-  color: #111827; /* Gray-900 */
-  background-color: #f3f4f6; /* Gray-100 */
+  color: var(--color-text);
+  background-color: var(
+    --color-bg-secondary,
+    #f3f4f6
+  ); /* Use variable if available or fallback */
+}
+[data-theme='dark'] .btn-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .btn-seen-active:hover {
-  color: #111827; /* Gray-900 */
-  background-color: #e5e7eb; /* Gray-200 */
+  color: var(--color-text);
+  background-color: var(--color-border);
 }
 
 .post-link {
@@ -345,20 +428,21 @@
   font-size: 0.85rem;
   border: 1px dashed var(--color-border);
   border-radius: 4px;
-  background: #f9fafb;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .context-input:focus {
   border-style: solid;
   border-color: var(--color-primary);
   outline: none;
-  background: white;
+  background: var(--color-card-bg);
 }
 
 /* Score Badges */
 .badge-score-10 {
-  background: #ff0000;
-  color: white;
+  background: var(--score-10-bg);
+  color: var(--score-10-text);
   box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
   display: inline-flex;
   align-items: center;
@@ -366,16 +450,16 @@
 }
 
 .badge-score-high {
-  background: #fecaca; /* Red-200 */
-  color: #991b1b; /* Red-800 */
+  background: var(--score-high-bg);
+  color: var(--score-high-text);
 }
 
 .badge-score-med {
-  background: #fef3c7; /* Amber-100 */
-  color: #92400e; /* Amber-800 */
+  background: var(--score-med-bg);
+  color: var(--score-med-text);
 }
 
 .badge-score-low {
-  background: #f3f4f6; /* Gray-100 */
-  color: #4b5563; /* Gray-600 */
+  background: var(--score-low-bg);
+  color: var(--score-low-text);
 }

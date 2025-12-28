@@ -20,9 +20,10 @@
     - **Scheduling**: Real-time "Next Run" countdown/info relative to user timezone.
     - **Notifications**: Control to **skip push notifications** if zero new posts are found.
     - **Profiles**: Visual progress bars indicating **Like Ratio** (Liked/Total) with color coding (Red <25%, Green >75%).
-    - **Branding**: Custom "InstaCurate" horizontal logo and matching PWA favicon (Rounded/Transparent).
     - **Comment Flow**: Supports AI suggestion review with **Context Input**, manual editing, and automated posting. Features a spinner overlay and "premium" saved state.
+    - **Dark Mode**: Fully implemented with **Theme Toggle**, persisted preference, and adaptive UI (including Instagram embeds and badges).
     - **Smart Scoring**: Displays AI-generated **Commentability Score (0-10)** based on persona fit.
+    - **Branding**: Custom "InstaCurate" horizontal logo and matching **Adaptive/Maskable PWA Icon** for Android (full-bleed gradient).
     - **Refined AI**: Prompt structured for a specific 30yo femme persona, avoiding generic phrases.
     - **Sorting**: Feed sorted by **Run ID** then **Posted Date** to prevent interleaved runs.
     - **Optimized Layout**: Compact footer stats and refined density.

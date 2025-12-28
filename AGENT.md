@@ -17,7 +17,7 @@
 - **Scraper**: Functional. Uses **Network Interception** (Playwright `waitForResponse`) to capture `graphql/query` JSON responses.
   - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
 - **Curation**: Implemented. Score = `engagement * recency_decay`. Sorts by `posted_at DESC`.
-  - **Admin UI**:
+  - **Admin UI**: Dark Mode enabled.
   - **Comment Flow**: AI suggestion review with **Context Input**, manual editing, and **Automated Posting**.
   - **AI Engine**: **Persona-driven** (30yo LA creator) generation with **Commentability Score (0-10)** and "soft-glow" vibe. Explicitly avoids generic phrases.
   - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).

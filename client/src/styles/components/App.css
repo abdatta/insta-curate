@@ -72,6 +72,16 @@ h1 {
   background: #eee;
 }
 
+[data-theme='dark'] .controls button {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .controls button:hover {
+  background: #333;
+}
+
 .status-text {
   margin-left: auto;
   font-size: 0.9rem;

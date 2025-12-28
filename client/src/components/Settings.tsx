@@ -366,16 +366,16 @@ export function Settings({ onRunComplete }: SettingsProps) {
             const pct =
               total > 0 ? Math.min(100, Math.max(0, (liked / total) * 100)) : 0;
 
-            let barColor = 'rgba(0,0,0,0.05)';
+            let barColor = 'var(--profile-bar-default)';
             if (total > 0) {
-              if (pct < 25)
-                barColor = '#fee2e2'; // Light Red
-              else if (pct > 75)
-                barColor = '#dcfce7'; // Light Green
-              else barColor = '#ffedd5'; // Light Orange
+              if (pct < 25) barColor = 'var(--profile-bar-red)';
+              else if (pct > 75) barColor = 'var(--profile-bar-green)';
+              else barColor = 'var(--profile-bar-orange)';
             }
 
-            const baseBg = !profile.is_enabled ? '#f3f4f6' : '#ffffff';
+            const baseBg = !profile.is_enabled
+              ? 'var(--profile-bar-disabled)'
+              : 'var(--profile-bar-base)';
             const style =
               total > 0
                 ? {

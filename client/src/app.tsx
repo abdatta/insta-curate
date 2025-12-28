@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import { PostCard } from './components/PostCard';
 import { Settings } from './components/Settings';
+import { ThemeToggle } from './components/ThemeToggle';
 import { NotificationToggle } from './components/NotificationToggle';
 import { useCuratedPosts } from './hooks/usePosts';
 import { api } from './services/api';
@@ -61,11 +62,15 @@ export function App() {
       <header>
         {/* <h1>InstaCurate</h1> */}
         <img
-          src="/assets/logo_horizontal.png"
+          src="/assets/logo_horizontal.png?v=2"
           alt="InstaCurate"
           class="app-logo"
         />
-        <div id="notifications-control">
+        <div
+          id="notifications-control"
+          style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+        >
+          <ThemeToggle />
           <NotificationToggle />
         </div>
       </header>
