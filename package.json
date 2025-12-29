@@ -7,7 +7,7 @@
     "dev": "concurrently \"tsx watch src/main.ts\" \"npm run dev --prefix client\"",
     "dev:backend": "tsx watch src/main.ts",
     "dev:client": "npm run dev --prefix client",
-    "build": "tsc && tsc-alias",
+    "build": "npm run build --prefix client && tsc && tsc-alias",
     "start": "node dist/src/main.js",
     "login": "tsx src/curator/auth.ts",
     "curate": "tsx src/curator/runCuration.ts",

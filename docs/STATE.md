@@ -1,6 +1,6 @@
 # State of the World
 
-> Last Updated: 2025-12-27
+> Last Updated: 2025-12-29
 
 ## Capabilities (What Works)
 
@@ -45,6 +45,7 @@
       - **Shared Types**: Single source of truth (`shared/types.ts`) for Client/Server API contracts.
       - **Type Safety**: Full camelCase mapping and strict Type handling across DB and UI.
       - **Robust Mapping**: Curation logic refactored to use object spreading, ensuring automatic persistence of new scraper fields (like `aiScore`).
+      - **Unified Build**: Root `npm run build` now correctly triggers both frontend and backend builds.
 
 ## Known Limitations / Risks
 
