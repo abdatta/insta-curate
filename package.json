@@ -11,6 +11,7 @@
     "start": "node dist/src/main.js",
     "login": "tsx src/curator/auth.ts",
     "curate": "tsx src/curator/runCuration.ts",
+    "lint": "prettier --check .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
   },

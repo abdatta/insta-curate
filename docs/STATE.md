@@ -47,6 +47,7 @@
       - **Robust Mapping**: Curation logic refactored to use object spreading, ensuring automatic persistence of new scraper fields (like `aiScore`).
       - **Unifled Build**: Root `npm run build` now correctly triggers both frontend and backend builds.
       - **NPM Workspaces**: Monorepo-style dependency management for cleaner structure and unified lockfile.
+      - **CI/CD Pipeline**: GitHub Actions workflow orchestrates **Lint** (Prettier), **Build** (TS/Vite), and **Deploy** (SSH) stages, ensuring quality on PRs and automated delivery on push.
 
 ## Known Limitations / Risks
 
