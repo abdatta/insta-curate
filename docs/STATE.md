@@ -44,6 +44,7 @@
     - **Architecture**:
       - **Shared Types**: Single source of truth (`shared/types.ts`) for Client/Server API contracts.
       - **Type Safety**: Full camelCase mapping and strict Type handling across DB and UI.
+      - **Robust Mapping**: Curation logic refactored to use object spreading, ensuring automatic persistence of new scraper fields (like `aiScore`).
 
 ## Known Limitations / Risks
 

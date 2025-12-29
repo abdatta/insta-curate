@@ -193,29 +193,31 @@ export async function runCuration() {
     const finalSelection = selected.slice(0, MAX_GLOBAL_POSTS);
 
     // Save to DB
-    const dbPosts = finalSelection.map(
-      (p) =>
-        ({
-          runId: runId,
-          profileHandle: p.handle,
-          postUrl: p.url,
-          shortcode: p.shortcode,
-          postedAt: p.postedAt ? new Date(p.postedAt) : new Date(),
-          commentCount: p.commentCount,
-          likeCount: p.likeCount,
-          score: p.score,
-          isCurated: true,
-          mediaType: p.mediaType as repo.MediaType,
-          caption: p.caption,
-          accessibilityCaption: p.accessibilityCaption,
-          hasLiked: p.hasLiked,
-          username: p.username,
-          userComment: null,
-          suggestedComments: p.suggestedComments || [],
-          mediaUrls: p.mediaUrls || [],
-          seen: p.seen || false,
-        }) as repo.Post
-    );
+    const dbPosts = finalSelection.map((p) => {
+      const {
+        handle,
+        url,
+        postedAt,
+        seen,
+        suggestedComments,
+        mediaUrls,
+        ...rest
+      } = p;
+      return {
+        ...rest, // Auto-maps: score, aiScore, commentCount, likeCount, etc.
+        runId,
+        // Transformations
+        profileHandle: handle,
+        postUrl: url,
+        postedAt: postedAt ? new Date(postedAt) : new Date(),
+        // Defaults
+        seen: seen ?? false,
+        suggestedComments: suggestedComments || [],
+        mediaUrls: mediaUrls || [],
+        isCurated: true,
+        userComment: null,
+      } as repo.Post;
+    });
 
     progress.updateTaskStatus(TASK_DONE, 'processing');
 
