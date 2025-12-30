@@ -1,10 +1,10 @@
+import type { CommentSuggestionResponse } from '../../../shared/types';
 import type {
   CuratedResponse,
+  ProfilesResponse,
   ProgressResponse,
   Settings,
-  ProfilesResponse,
 } from '../types';
-import type { CommentSuggestionResponse } from '../../../shared/types';
 
 export const api = {
   async getLatestCurated(): Promise<CuratedResponse> {

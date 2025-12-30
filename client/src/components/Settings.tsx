@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
-import type { Task, Profile } from '../types';
+import { TASK_DONE, TASK_INITIALIZING } from '@shared/constants';
 import { api } from '../services/api';
-import { TASK_INITIALIZING, TASK_DONE } from '@shared/constants';
 import '../styles/components/Settings.css';
+import type { Profile, Task } from '../types';
 
 interface SettingsProps {
   onRunComplete?: () => void;

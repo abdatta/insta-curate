@@ -1,7 +1,7 @@
+import fs from 'fs';
+import path from 'path';
 import webpush from 'web-push';
 import { getSetting, setSetting } from '../db/repo';
-import path from 'path';
-import fs from 'fs';
 
 const VAPID_FILE = path.join(process.cwd(), 'data', 'vapid.json');
 

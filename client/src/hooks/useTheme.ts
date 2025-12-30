@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 export function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {

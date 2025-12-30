@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+import { NotificationToggle } from './components/NotificationToggle';
 import { PostCard } from './components/PostCard';
 import { Settings } from './components/Settings';
 import { ThemeToggle } from './components/ThemeToggle';
-import { NotificationToggle } from './components/NotificationToggle';
 import { useCuratedPosts } from './hooks/usePosts';
 import { api } from './services/api';
-import { timeAgo } from './utils/formatting';
-import './styles/tokens.css';
-import './styles/global.css';
 import './styles/components/App.css';
 import './styles/components/HeaderLogo.css';
+import './styles/global.css';
+import './styles/tokens.css';
+import { timeAgo } from './utils/formatting';
 
 export function App() {
   const { data, loading, error, refresh } = useCuratedPosts();

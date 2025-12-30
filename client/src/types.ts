@@ -1,8 +1,8 @@
 import type { Post } from '@shared/types';
 
 // Re-export shared types as the source of truth
-export type { Post } from '@shared/types';
 export { MediaType } from '@shared/types';
+export type { Post } from '@shared/types';
 
 export interface RunStatus {
   status: 'running' | 'completed' | 'failed' | 'idle';

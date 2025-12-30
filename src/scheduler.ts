@@ -1,6 +1,6 @@
 import cron from 'node-cron';
-import { getSetting } from './db/repo';
 import { runCuration } from './curator/runCuration';
+import { getSetting } from './db/repo';
 
 let currentTask: cron.ScheduledTask | null = null;
 

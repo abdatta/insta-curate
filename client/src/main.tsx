@@ -1,8 +1,8 @@
 import { render } from 'preact';
-import { App } from './app';
-import './styles/global.css';
 import { registerSW } from 'virtual:pwa-register';
+import { App } from './app';
 import { api } from './services/api';
+import './styles/global.css';
 
 const updateSW = registerSW({ immediate: true });
 

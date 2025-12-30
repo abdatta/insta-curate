@@ -1,6 +1,6 @@
-import { getContext } from './auth';
 import fs from 'fs';
 import path from 'path';
+import { getContext } from './auth';
 
 async function inspect() {
   const { context, browser } = await getContext();

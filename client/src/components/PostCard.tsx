@@ -1,8 +1,8 @@
 import { useState } from 'preact/hooks';
-import type { Post } from '../types';
-import { timeAgo, escapeHtml } from '../utils/formatting';
 import { api } from '../services/api';
 import '../styles/components/PostCard.css';
+import type { Post } from '../types';
+import { escapeHtml, timeAgo } from '../utils/formatting';
 
 interface PostCardProps {
   post: Post;
