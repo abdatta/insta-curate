@@ -98,7 +98,6 @@ export async function scrapeProfile(
           // Try carousel_media first (from xdt response)
           if (node.carousel_media && Array.isArray(node.carousel_media)) {
             for (const item of node.carousel_media) {
-              if (mediaUrls.length >= 5) break;
               const best = getBestImage(item.image_versions2?.candidates);
               if (best) mediaUrls.push(best);
               else if (item.display_url) mediaUrls.push(item.display_url); // Fallback
@@ -109,7 +108,6 @@ export async function scrapeProfile(
             const children = node.edge_sidecar_to_children?.edges;
             if (Array.isArray(children)) {
               for (const child of children) {
-                if (mediaUrls.length >= 5) break;
                 if (child.node) {
                   const best = getBestImage(
                     child.node.image_versions2?.candidates

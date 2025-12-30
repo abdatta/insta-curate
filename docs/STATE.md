@@ -7,7 +7,7 @@
 - **Login**: Auth state persists via `data/storageState.json`. Manual login flow exists if cookie expires.
 - **Scraping**: Robust **Network Interception** captures full post metadata.
   - Captures: Shortcode, Caption, Media Type (Image/Video/Carousel), Likes, Comments, Timestamp.
-  - **High-Res Extraction**: Prioritizes `image_versions2` candidates for best quality.
+  - **High-Res Extraction**: Captures **All** available images (unlimited) from carousels, prioritizing `image_versions2` candidates for best quality.
 - **Curation Algorithm**:
   - Favorites high comments.
   - Penalizes posts older than 24h.
