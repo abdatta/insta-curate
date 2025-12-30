@@ -130,6 +130,21 @@
   font-size: 1rem;
   font-family: 'Inter', system-ui, sans-serif;
   color: var(--color-text);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.profile-handle:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.profile-handle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .profile-item.disabled .profile-handle {

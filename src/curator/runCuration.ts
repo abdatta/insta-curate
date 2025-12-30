@@ -8,6 +8,7 @@ import fs from 'fs';
 // Config
 const MAX_POSTS_PER_PROFILE = 5;
 const MAX_GLOBAL_POSTS = 30;
+const MAX_IMAGES_PER_POST = 20;
 const LOOKBACK_HOURS = 24;
 const MIN_COMMENTS = 3;
 
@@ -131,7 +132,7 @@ export async function runCuration() {
 
               await Promise.all(
                 aiTargets.map(async (p) => {
-                  const mediaUrls = p.mediaUrls.slice(0, 5); // Max 5 images
+                  const mediaUrls = p.mediaUrls.slice(0, MAX_IMAGES_PER_POST); // Cap images sent to AI
                   const aiRes = await ai.generatePostComments(
                     p.handle,
                     p.caption || '',

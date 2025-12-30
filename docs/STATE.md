@@ -15,7 +15,7 @@
 - **Automation**:
   - **Commenting**: Playwright-based automation that **Likes** and **Comments** on posts via a visible browser session (`headless: false`, `slowMo`).
   - **Error Handling**: Captures screenshots of failures to `data/screenshots` and alerts the UI.
-  - **AI Engine**: Enhanced `gpt-5-nano` prompt that treats Media + Caption + Profile Handle as a single context. Explicitly detects memes for witty reactions vs aesthetic observations for regular posts.
+  - **AI Engine**: Enhanced `gpt-5-nano` prompt that treats Media + Caption + Profile Handle as a single context (sending up to 20 media URLs per post for richer cues). Explicitly detects memes for witty reactions vs aesthetic observations for regular posts.
   - **Admin UI**:
     - **Scheduling**: Real-time "Next Run" countdown/info relative to user timezone.
     - **Notifications**: Control to **skip push notifications** if zero new posts are found.
