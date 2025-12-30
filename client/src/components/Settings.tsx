@@ -397,7 +397,14 @@ export function Settings({ onRunComplete }: SettingsProps) {
                     zIndex: 1,
                   }}
                 >
-                  <span class="profile-handle">@{profile.handle}</span>
+                  <a
+                    class="profile-handle"
+                    href={`https://www.instagram.com/${profile.handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @{profile.handle}
+                  </a>
                   <span
                     style={{
                       fontSize: '0.75rem',
