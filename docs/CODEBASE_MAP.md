@@ -37,3 +37,4 @@
 | `.prettierrc`           | Prettier formatting rules.                 |
 | `.husky/`               | Git hooks configuration.                   |
 | `.vscode/settings.json` | Editor-specific settings (Format on Save). |
+| `lint-staged.config.js` | Pre-commit utility configuration.          |

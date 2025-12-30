@@ -1,6 +1,6 @@
-import { chromium, BrowserContext, Page } from 'playwright';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { BrowserContext, chromium } from 'playwright';
 
 // Export constant so other modules can use the same state path
 export const STORAGE_STATE_PATH = path.join(

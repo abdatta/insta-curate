@@ -45,6 +45,7 @@
       - **Shared Types**: Single source of truth (`shared/types.ts`) for Client/Server API contracts.
       - **Type Safety**: Full camelCase mapping and strict Type handling across DB and UI.
       - **Robust Mapping**: Curation logic refactored to use object spreading, ensuring automatic persistence of new scraper fields (like `aiScore`).
+      - **Strict Types**: Enforces `noUnusedLocals` and `noUnusedParameters`.
       - **Unifled Build**: Root `npm run build` now correctly triggers both frontend and backend builds.
       - **NPM Workspaces**: Monorepo-style dependency management for cleaner structure and unified lockfile.
       - **CI/CD Pipeline**: GitHub Actions workflow orchestrates **Lint** (Prettier), **Build** (TS/Vite), and **Deploy** (SSH) stages, ensuring quality on PRs and automated delivery on push.
@@ -66,4 +67,4 @@
 
 - **`scrapeProfile.ts`**: The PostData type definition is manual. Should ideally be generated from a schema, but IG's schema is private/undocumented.
 - **Testing**: Added initial backend tests, but frontend interactions (especially `PostCard` logic) need more coverage.
-- **Formatting**: Implemented **Prettier** + **Husky** pre-commit hooks to enforce consistent style automatically.
+- **Formatting/Linting**: Implemented **Prettier** (with auto-organize imports) + **TypeScript Strict Mode**. Enforced via **smart pre-commit hooks** that run checks only on relevant staged files.

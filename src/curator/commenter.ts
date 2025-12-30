@@ -1,6 +1,6 @@
-import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
+import { chromium } from 'playwright';
 import { STORAGE_STATE_PATH } from './auth';
 
 export async function publishCommentToInstagram(
@@ -46,9 +46,6 @@ export async function publishCommentToInstagram(
     // Instagram SVG: aria-label="Like" -> parent
     const container = 'div[data-visualcompletion="ignore-dynamic"]';
     const likeBtn = page.locator(`${container} svg[aria-label="Like"]`).first();
-    const unlikeBtn = page
-      .locator(`${container} svg[aria-label="Unlike"]`)
-      .first();
 
     // Wait until either the Like or Unlike button is visible
     await page

@@ -47,7 +47,6 @@ export const upsertProfiles = (handles: string[]) => {
   const update = db.prepare(
     'UPDATE profiles SET is_enabled = 1 WHERE handle = ?'
   );
-  const disableAll = db.prepare('UPDATE profiles SET is_enabled = 0');
 
   const transact = db.transaction(() => {
     handles.forEach((h) => {

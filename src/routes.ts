@@ -1,30 +1,26 @@
 import express from 'express';
+import { runCuration } from './curator/runCuration';
 import {
-  getCuratedPosts,
-  getAllCuratedPosts,
-  getLatestRun,
-  getLatestSuccessfulRun,
-  createRun,
-  completeRun,
-  getSetting,
-  setSetting,
-  upsertProfiles,
-  getAllProfiles,
   addProfile,
   deleteProfile,
-  setProfileEnabled,
+  getAllCuratedPosts,
+  getAllProfiles,
+  getLatestRun,
+  getLatestSuccessfulRun,
+  getSetting,
   saveSubscription,
+  setProfileEnabled,
+  setSetting,
   updatePostComment,
   updatePostLikeStatus,
 } from './db/repo';
-import { runCuration } from './curator/runCuration';
 import { getVapidPublicKey } from './push/vapid';
-import { scheduleNextRun, getNextRunTime } from './scheduler';
+import { getNextRunTime, scheduleNextRun } from './scheduler';
 
 const router = express.Router();
 
 // GET /api/curated/latest
-router.get('/curated/latest', (req, res) => {
+router.get('/curated/latest', (_req, res) => {
   const lastRun = getLatestRun();
   const successfulRun = getLatestSuccessfulRun();
 
@@ -124,7 +120,7 @@ router.post('/posts/:shortcode/generate-comments', async (req, res) => {
 });
 
 // POST /api/admin/run
-router.post('/admin/run', async (req, res) => {
+router.post('/admin/run', async (_req, res) => {
   // Check if running?
   const latest = getLatestRun();
   if (latest && latest.status === 'running') {
@@ -153,7 +149,7 @@ router.post('/admin/run', async (req, res) => {
 });
 
 // GET /api/admin/status
-router.get('/admin/status', (req, res) => {
+router.get('/admin/status', (_req, res) => {
   const run = getLatestRun();
   const nextRun = getNextRunTime();
   res.json({
@@ -164,13 +160,13 @@ router.get('/admin/status', (req, res) => {
 });
 
 // GET /api/admin/progress
-router.get('/admin/progress', async (req, res) => {
+router.get('/admin/progress', async (_req, res) => {
   const { getProgress } = await import('./curator/progress');
   res.json(getProgress());
 });
 
 // GET /api/admin/settings
-router.get('/admin/settings', (req, res) => {
+router.get('/admin/settings', (_req, res) => {
   res.json({
     schedule_enabled: getSetting('schedule_enabled') === 'true',
     schedule_interval_hours: parseInt(
@@ -202,7 +198,7 @@ router.post('/admin/settings', (req, res) => {
 });
 
 // GET /api/admin/profiles
-router.get('/admin/profiles', (req, res) => {
+router.get('/admin/profiles', (_req, res) => {
   const profiles = getAllProfiles();
   // Return simple text list for UI textarea? Or Objects?
   // UI wants objects probably, but "textarea newline separated" implies strings.
@@ -265,7 +261,7 @@ router.post('/push/subscribe', (req, res) => {
 });
 
 // GET /api/push/vapidPublicKey
-router.get('/push/vapidPublicKey', (req, res) => {
+router.get('/push/vapidPublicKey', (_req, res) => {
   const key = getVapidPublicKey();
   res.json({ publicKey: key });
 });

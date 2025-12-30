@@ -55,6 +55,7 @@ npm run build
 3.  **Dependency Discipline**: Do not add large framework dependencies (e.g. Next.js, full React) unnecessarily. We use **Preact** for the PWA to balance component architecture with lightweight footprint.
 4.  **Shared Contracts**: ALWAYS use `shared/types.ts` for data structures exchanged between Client and Server. Do not duplicate interfaces.
 5.  **Artifacts**: Update `docs/STATE.md` if you add a major feature.
+6.  **Respect the Linter**: Run `npm run lint` before finishing tasks. Unused imports/variables are not allowed. Use `_` prefix for intentionally unused parameters.
 
 ## 5. Navigation
 

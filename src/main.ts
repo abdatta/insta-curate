@@ -1,13 +1,12 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import dotenv from 'dotenv';
-import routes from './routes';
-import { TASK_INITIALIZING, TASK_DONE } from '@shared/constants';
-import { runMigrations } from './db/migrations';
-import { initScheduler } from './scheduler';
-import { initVapid } from './push/vapid';
 import { createSqliteGuiApp } from 'sqlite-gui-node';
 import { verbose } from 'sqlite3';
+import { runMigrations } from './db/migrations';
+import { initVapid } from './push/vapid';
+import routes from './routes';
+import { initScheduler } from './scheduler';
 
 dotenv.config();
 
@@ -39,12 +38,6 @@ app.use(express.static(path.join(process.cwd(), 'client/dist')));
 
 // Routes
 app.use('/api', routes);
-
-app.get('/constants.js', (_req, res) => {
-  res.type('application/javascript');
-  res.send(`const TASK_INITIALIZING = "${TASK_INITIALIZING}";
-const TASK_DONE = "${TASK_DONE}";`);
-});
 
 // Init
 async function start() {

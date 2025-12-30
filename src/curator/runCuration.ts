@@ -1,9 +1,8 @@
-import { getContext } from './auth';
-import { TASK_INITIALIZING, TASK_DONE } from '@shared/constants';
-import { scrapeProfile, PostData } from './scrapeProfile';
+import { TASK_DONE, TASK_INITIALIZING } from '@shared/constants';
 import * as repo from '../db/repo';
 import { sendPushNotification } from '../push/send';
-import fs from 'fs';
+import { getContext } from './auth';
+import { PostData, scrapeProfile } from './scrapeProfile';
 
 // Config
 const MAX_POSTS_PER_PROFILE = 5;

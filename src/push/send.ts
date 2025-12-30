@@ -1,10 +1,5 @@
 import webpush from 'web-push';
-import {
-  getSubscriptions,
-  deleteSubscription,
-  PushSubscriptionRecord,
-} from '../db/repo';
-import { initVapid } from './vapid';
+import { deleteSubscription, getSubscriptions } from '../db/repo';
 
 // initVapid(); // Removed top-level call to avoid early DB access
 
