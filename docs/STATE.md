@@ -1,6 +1,6 @@
 # State of the World
 
-> Last Updated: 2025-12-29
+> Last Updated: 2025-12-30
 
 ## Capabilities (What Works)
 
@@ -48,6 +48,7 @@
       - **Unifled Build**: Root `npm run build` now correctly triggers both frontend and backend builds.
       - **NPM Workspaces**: Monorepo-style dependency management for cleaner structure and unified lockfile.
       - **CI/CD Pipeline**: GitHub Actions workflow orchestrates **Lint** (Prettier), **Build** (TS/Vite), and **Deploy** (SSH) stages, ensuring quality on PRs and automated delivery on push.
+      - **Database Viewer**: integrated `sqlite-gui-node` at `/db-viewer` for instant local data inspection (linked via Settings footer).
 
 ## Known Limitations / Risks
 

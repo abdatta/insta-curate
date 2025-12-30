@@ -32,6 +32,7 @@
       - `runs`: Audit log of executions.
       - `posts`: The curated content (normalized, includes `user_comment`).
       - `push_subscriptions`: VAPID endpoints for notifications.
+    - **Visualizer**: Integrated web-based GUI at `/db-viewer` (using `sqlite-gui-node`) for easy inspection.
 
 4.  **The Frontend (`client/`)**
     - **Tech**: Vite, Preact, TypeScript, CSS Modules (Tokens).

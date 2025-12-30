@@ -70,6 +70,10 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
+      '/db-viewer': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
 });

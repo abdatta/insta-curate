@@ -21,7 +21,7 @@
   - **Comment Flow**: AI suggestion review with **Context Input**, manual editing, and **Automated Posting**.
   - **AI Engine**: **Persona-driven** (30yo LA creator) generation with **Commentability Score (0-10)** and "soft-glow" vibe. Explicitly avoids generic phrases.
   - **History**: Grouped history view with status badges (Blue=New, Orange=Late, Grey=Old).
-- **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables.
+- **Database**: SQLite (`data/app.db`) with `posts`, `runs`, `profiles`, `settings`, `push_subscriptions` tables. Contains integrated **DB Viewer** at `/db-viewer`.
 - **Notifications**: Web Push (VAPID) enabled with **PWA Permission Toggle**. Sends alerts on run completion (with new post counts).
 - **Frontend**: Vite + Preact + TypeScript PWA. Uses **Shared Types** for strict API contracts. Lists curated posts, allows manual triggering of runs (with progress UI), and supports comment approval workflow.
 

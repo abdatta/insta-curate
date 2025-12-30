@@ -451,6 +451,24 @@ export function Settings({ onRunComplete }: SettingsProps) {
           })}
         </div>
       </div>
+
+      <div
+        style={{ textAlign: 'center', marginTop: '2rem', marginBottom: '1rem' }}
+      >
+        <a
+          href="/db-viewer"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: 'var(--color-text-secondary)',
+            fontSize: '0.8rem',
+            opacity: 0.5,
+            textDecoration: 'none',
+          }}
+        >
+          Database Viewer
+        </a>
+      </div>
     </div>
   );
 }
