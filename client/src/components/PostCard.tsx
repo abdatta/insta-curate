@@ -9,9 +9,15 @@ interface PostCardProps {
   post: Post;
   rank: number;
   onCommentPosted?: () => void;
+  onPostUpdate?: (shortcode: string, updates: Partial<Post>) => void;
 }
 
-export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
+export function PostCard({
+  post,
+  rank,
+  onCommentPosted,
+  onPostUpdate,
+}: PostCardProps) {
   const postedTime = new Date(post.postedAt).getTime();
   const now = new Date().getTime();
   const ageHours = (now - postedTime) / (1000 * 60 * 60);
@@ -58,12 +64,14 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
     e.stopPropagation(); // Don't toggle collapse from the row click
     const newSeen = !isSeen;
     setLocalSeen(newSeen);
+    onPostUpdate?.(post.shortcode, { seen: newSeen });
 
     try {
       await api.markSeen(post.shortcode, newSeen);
     } catch (err) {
       console.error(err);
       setLocalSeen(!newSeen); // Revert on error
+      onPostUpdate?.(post.shortcode, { seen: !newSeen });
     }
   };
 
@@ -77,6 +85,10 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
       // Update local state immediately
       setLocalUserComment(commentText);
       setLocalHasLiked(true);
+      onPostUpdate?.(post.shortcode, {
+        userComment: commentText,
+        hasLiked: true,
+      });
 
       setCommentText('');
       if (onCommentPosted) onCommentPosted();
