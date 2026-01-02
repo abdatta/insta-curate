@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { NotificationToggle } from './components/NotificationToggle';
 import { PostCard } from './components/PostCard';
 import { Settings } from './components/Settings';
@@ -10,11 +10,16 @@ import './styles/components/HeaderLogo.css';
 import './styles/global.css';
 import './styles/tokens.css';
 import { timeAgo } from './utils/formatting';
+import { countAutoExpandedPosts } from './utils/posts';
 
 export function App() {
   const { data, loading, error, refresh } = useCuratedPosts();
   const [activeTab, setActiveTab] = useState<'curated' | 'settings'>('curated');
   const [statusText, setStatusText] = useState('');
+  const autoExpandCount = useMemo(
+    () => (data ? countAutoExpandedPosts(data.posts) : 0),
+    [data]
+  );
 
   // Status Polling for header
   useEffect(() => {
@@ -81,7 +86,17 @@ export function App() {
             class={`tab-btn ${activeTab === 'curated' ? 'active' : ''}`}
             onClick={() => setActiveTab('curated')}
           >
-            Curated
+            <span class="tab-label">
+              Curated
+              {autoExpandCount > 0 && (
+                <span
+                  class="tab-badge"
+                  aria-label={`${autoExpandCount} posts need attention`}
+                >
+                  {autoExpandCount}
+                </span>
+              )}
+            </span>
           </button>
           <button
             class={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
