@@ -13,7 +13,7 @@ import { timeAgo } from './utils/formatting';
 import { countAutoExpandedPosts } from './utils/posts';
 
 export function App() {
-  const { data, loading, error, refresh } = useCuratedPosts();
+  const { data, loading, error, refresh, updatePost } = useCuratedPosts();
   const [activeTab, setActiveTab] = useState<'curated' | 'settings'>('curated');
   const [statusText, setStatusText] = useState('');
   const autoExpandCount = useMemo(
@@ -145,6 +145,7 @@ export function App() {
                           key={post.shortcode}
                           post={post}
                           rank={idx + 1}
+                          onPostUpdate={updatePost}
                         />
                       </>
                     );
