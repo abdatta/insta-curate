@@ -3,6 +3,7 @@ import { api } from '../services/api';
 import '../styles/components/PostCard.css';
 import type { Post } from '../types';
 import { escapeHtml, timeAgo } from '../utils/formatting';
+import { shouldCollapsePost } from '../utils/posts';
 
 interface PostCardProps {
   post: Post;
@@ -41,9 +42,7 @@ export function PostCard({ post, rank, onCommentPosted }: PostCardProps) {
   const isSeen = localSeen;
 
   // Collapsed state: collapsed if old, liked, commented, OR SEEN
-  const [collapsed, setCollapsed] = useState(
-    isOld || hasLiked || hasCommented || isSeen
-  );
+  const [collapsed, setCollapsed] = useState(shouldCollapsePost(post));
   const [commentText, setCommentText] = useState('');
   const [context, setContext] = useState('');
   const [posting, setPosting] = useState(false);
