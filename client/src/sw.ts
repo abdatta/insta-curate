@@ -16,7 +16,7 @@ self.addEventListener('push', (event: PushEvent) => {
   const options = {
     body: data.body || 'Your curated feed is ready.',
     icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    badge: '/icons/badge.png',
     data: { url: data.url || '/' },
   };
   event.waitUntil(self.registration.showNotification(title, options));
