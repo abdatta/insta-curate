@@ -4,6 +4,15 @@ import { sendPushNotification } from '../push/send';
 import { getContext } from './auth';
 import { PostData, scrapeProfile } from './scrapeProfile';
 
+function shuffleProfiles<T>(profiles: T[]): T[] {
+  const shuffled = [...profiles];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Config
 const MAX_POSTS_PER_PROFILE = 5;
 const MAX_GLOBAL_POSTS = 30;
@@ -37,7 +46,9 @@ export async function runCuration() {
 
   // INIT PROGRESS
   const allProfiles = repo.getProfiles();
-  const enabledProfiles = allProfiles.filter((p) => p.is_enabled);
+  const enabledProfiles = shuffleProfiles(
+    allProfiles.filter((p) => p.is_enabled)
+  );
 
   // We want to show even disabled ones? Or just enabled?
   // Let's just track enabled ones for now to be less confusing.
